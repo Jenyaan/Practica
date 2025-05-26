@@ -1,0 +1,63 @@
+name: backend
+services:
+  php-dev:
+    build:
+      context: ..
+      dockerfile: .docker/php-dev.Dockerfile
+    volumes:
+      - ../.docker:/app/.docker
+      - src:/app
+      - php-vscode-server:/root/.vscode-server
+    environment:
+      - LOGFILE_NAME="dev-laravel.log"
+    ports:
+      - 127.0.0.1:8000:80
+    depends_on:
+      - db
+    tty: true
+    stdin_open: true
+  php-server:
+    build:
+      context: ..
+      dockerfile: .docker/php-server.Dockerfile
+    develop:
+      watch:
+        - path: ..
+          action: sync
+          ignore: .docker/ storage/
+          target: /app
+    ports:
+      - 127.0.0.1:8080:80
+    environment:
+      - LOGFILE_NAME="server-laravel.log"
+    depends_on:
+      - db
+  db:
+    image: postgres:17
+    env_file:
+      - db.env
+    volumes:
+      - type: volume
+        source: ipz-postgres-data
+        target: /var/lib/postgresql/data
+      - type: bind
+        source: ./initdb.sh
+        target: /docker-entrypoint-initdb.d/initdb.sh
+    ports:
+      - 127.0.0.1:5432:5432
+  adminer:
+    image: adminer:5
+    ports:
+      - 127.0.0.1:800:8080
+    depends_on:
+      - db
+  plant-uml:
+    image: plantuml/plantuml-server:tomcat
+    ports:
+      - 127.0.0.1:8001:8080
+volumes:
+  php-vscode-server:
+    name: php-vscode-server
+  ipz-postgres-data:
+    name: ipz-postgres-data
+  src:
