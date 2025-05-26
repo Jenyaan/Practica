@@ -38,7 +38,7 @@ services:
       - db.env
     volumes:
       - type: volume
-        source: ipz-postgres-data
+        source: postgres-data
         target: /var/lib/postgresql/data
       - type: bind
         source: ./initdb.sh
@@ -58,6 +58,6 @@ services:
 volumes:
   php-vscode-server:
     name: php-vscode-server
-  ipz-postgres-data:
-    name: ipz-postgres-data
+  postgres-data:
+    name: library-postgres-data
   src:
