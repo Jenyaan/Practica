@@ -1,0 +1,44 @@
+.footer{
+    background: #EC9704;   
+    display: flex;
+    height: 140px;
+    justify-content: space-around;    
+    align-items: center;
+    padding-bottom: 10px;
+}
+
+
+.footer_description{
+    display: flex;
+    gap: 95px;
+}
+
+.footer_description > p{
+    font-size: 24px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
+}
+
+.footer_social > p{
+    margin-bottom: 15px;
+    font-size: 24px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
+}
+
+.footer_message {
+    display: flex;
+    gap: 25px;
+}
+
+.footer_message > div{
+    width: 55px;
+    height: 55px;
+}
+
+.footer_message > div > img{
+    width: auto;
+    height: 100%;
+}

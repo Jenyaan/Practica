@@ -1,0 +1,79 @@
+body{
+    margin: 0;
+    font-family: "Gotu", sans-serif;
+}
+
+.header{
+    background-color: rgba(236, 151, 4, 1);
+    height: 100px;
+    padding: 0px 32px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.header_left{
+    display: flex;
+    align-items: center;
+    gap: 63px;
+
+}
+
+.header_logo{
+    width: 72px;
+    height: 72px;
+}
+
+.header_logo > img{
+    width: auto;
+    height: 100%;
+}
+
+.header_search{
+    border-radius: 24px;
+    background: #D9D9D9;
+    display: flex;
+    align-items: center;
+    padding: 5px 10px;
+    width: 280px;
+    height: 35px;
+}
+
+.header_search > input{
+    border: none;
+    background: transparent;
+    outline: none;
+    flex: 1;
+    font-size: 16px;
+}
+
+.header_search > img{
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+}
+
+.header_right{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 24px;
+
+}
+
+.header_right > p{
+    font-size: 20px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
+}
+
+.header_avatar{
+    width: 48px;
+    height: 48px;
+}
+
+.header_dropmenu{
+    width: 34px;
+    height: 34px;
+}
