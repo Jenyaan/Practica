@@ -9,13 +9,19 @@
 <body>
     <div id="header"></div>
     <div class="home_main">
-        <div class="home_description">
-            <h1>Ласкаво просимо у твій цифровий книжковий простір — завантажуй улюблені книги, читай у зручний момент, зберігай у власній бібліотеці або ділися з друзями. Зручно, надійно й завжди поруч. </h1>
-            <button>Почати</button>
+        <h1>Мої Книги</h1>
+        <div class="view_books">
+            <div id="cart" class="cataloge_books"></div>
+            <div class="fillter_books">
+                <input type="text" id="search" placeholder="Пошук за автором чи назвою">
+                <select id="genre">
+                <option value="">Жанр</option>
+                <option value="history">Історія</option>
+                <option value="fiction">Художня</option>
+                </select>
+            </div>
         </div>
-        <div class="home_image">
-            <img src="../../public/Home.png" alt="">
-        </div>
+        <div class="pagination"><p>1 ... 3 <span>4</span> 5 ... 12</p></div>
     </div>
     <div id="footer"></div>
     <script type="module" src="./home.js"></script>

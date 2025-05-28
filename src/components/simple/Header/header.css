@@ -1,6 +1,12 @@
+html {
+  height: 100%;
+}
 body{
     margin: 0;
     font-family: "Gotu", sans-serif;
+    min-height: 100%;
+    display: grid;
+    grid-template-rows: auto 1fr auto;
 }
 
 .header{
@@ -20,8 +26,8 @@ body{
 }
 
 .header_logo{
-    width: 72px;
-    height: 72px;
+    width: 52px;
+    height: 52px;
 }
 
 .header_logo > img{
@@ -69,11 +75,21 @@ body{
 }
 
 .header_avatar{
-    width: 48px;
-    height: 48px;
+    width: 38px;
+    height: 38px;
+}
+
+.header_avatar > img{
+    width: auto;
+    height: 100%;
 }
 
 .header_dropmenu{
-    width: 34px;
-    height: 34px;
+    width: 24px;
+    height: 24px;
+}
+
+.header_dropmenu > img{
+    width: auto;
+    height: 100%;
 }
