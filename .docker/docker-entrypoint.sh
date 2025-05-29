@@ -2,7 +2,7 @@
 set -e
 
 ./artisan migrate:fresh --seed
-./artisan cache:clear
+./artisan optimize:clear
 ./artisan config:cache
 ./artisan route:cache
 
