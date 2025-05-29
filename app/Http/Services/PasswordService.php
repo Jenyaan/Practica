@@ -1,6 +1,6 @@
 <?php
 
-namespace Ren\Http\Services;
+namespace App\Http\Services;
 
 use App\Models\User;
 use Illuminate\Support\Facades\Password;
@@ -13,7 +13,7 @@ class PasswordService
      */
     public function sendResetPasswordEmail(array $validated): void
     {
-        $status = Password::sendResetLink($validated["email"]);
+        $status = Password::sendResetLink($validated);
         if ($status !== Password::ResetLinkSent) {
             throw new BadRequestHttpException($status);
         }
@@ -34,5 +34,6 @@ class PasswordService
         if ($status !== Password::PasswordReset) {
             throw new BadRequestHttpException($status);
         }
+        
     }
 }

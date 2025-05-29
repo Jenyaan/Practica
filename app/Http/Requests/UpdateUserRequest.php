@@ -24,7 +24,7 @@ class UpdateUserRequest extends FormRequest
     public function rules(): array
     {
         return [
-            "name" => "max:30",
+            "name" => "string|alpha|max:30",
             "email" => ["email", new EmailRule],
             "password" => Password::default(),
         ];

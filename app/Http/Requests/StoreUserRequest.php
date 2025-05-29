@@ -24,7 +24,7 @@ class StoreUserRequest extends FormRequest
     public function rules(): array
     {
         return [
-            "name" => "required|max:30",
+            "name" => "required|string|alpha|max:30",
             "email" => ["required", "email", new EmailRule],
             "password" => ["required", Password::default()],
         ];

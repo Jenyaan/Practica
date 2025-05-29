@@ -24,7 +24,7 @@ class UserController extends Controller implements HasMiddleware
     public static function middleware(): array
     {
         return [
-            new Middleware('auth', except: ['store', 'index', 'show']),
+            new Middleware("auth", except: ["store"]),
         ];
     }
 
@@ -33,7 +33,8 @@ class UserController extends Controller implements HasMiddleware
      */
     public function index()
     {
-        return $this->userService->listUserResources();
+        $userPage = $this->userService->listUserResources();
+        return $userPage->toResourceCollection();
     }
 
     /**
@@ -41,7 +42,9 @@ class UserController extends Controller implements HasMiddleware
      */
     public function store(StoreUserRequest $request)
     {
-        return $this->userService->createUser($request)->response()->setStatusCode(201);
+        $validated = $request->validated();
+        $user = $this->userService->createUser($validated);
+        return $user->toResource()->response()->setStatusCode(201);
     }
 
     /**
@@ -49,7 +52,7 @@ class UserController extends Controller implements HasMiddleware
      */
     public function show(User $user)
     {
-        return $this->userService->getUserResource($user);
+        return $user->toResource();
     }
 
     /**
@@ -57,7 +60,9 @@ class UserController extends Controller implements HasMiddleware
      */
     public function update(UpdateUserRequest $request, User $user)
     {
-        return $this->userService->updateUser($request, $user);
+        $validated = $request->validated();
+        $user = $this->userService->updateUser($validated, $user);
+        return $user->toResource();
     }
 
     /**
@@ -65,6 +70,7 @@ class UserController extends Controller implements HasMiddleware
      */
     public function destroy(User $user)
     {
-        return $this->userService->deleteUser($user);
+        $this->userService->deleteUser($user);
+        return $user->toResource();
     }
 }
