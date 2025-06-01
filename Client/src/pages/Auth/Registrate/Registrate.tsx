@@ -1,12 +1,39 @@
 import styles from '../../../overlays/Auth/Auth.module.css';
 import { Link } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
+import { useState } from 'react';
+import type { RegistrateRequest } from '../../../models/AuthModel';
+import axios from 'axios';
+import { PREFIX } from '../../../api/API';
 
 const Registrate = () => {
   const { register, handleSubmit, watch, formState: { errors } } = useForm();
   const password = watch('password');
-  const onSubmit = (data: any) => console.log(data);
+  const [serverMessage, setServerMessage] = useState('');
 
+  
+  const onSubmit = async (dataF: any) => {
+
+    const data: RegistrateRequest = {
+      name: dataF.name,
+      email: dataF.email,
+      password: dataF.password
+    }
+    
+    try {
+      const response = await axios.post(`${PREFIX}/api/v1/users`, data);
+
+      if (response.status === 200) {
+        setServerMessage('Вхід успішний!');
+      }
+    } catch (error: any) {
+      if (error.response?.status === 401) {
+        setServerMessage('Невірний логін або пароль.');
+      } else {
+        setServerMessage('Сталася помилка. Спробуйте пізніше.');
+      }
+    }
+  };
   return (
     <>
       <h1 className={styles.auth_title}>Реєстрація</h1>
@@ -36,7 +63,7 @@ const Registrate = () => {
               ? errors.password.message
               : typeof errors.name?.message === "string"
               ? errors.name.message
-              : ""}
+              : serverMessage}
           </p>
         )}        
         
