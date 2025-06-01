@@ -9,6 +9,7 @@ import Login from './pages/Auth/Login/Login';
 import Registrate from './pages/Auth/Registrate/Registrate';
 import CreatePassword from './pages/Auth/CreatePassword/CreatePassword';
 import SendPassword from './pages/Auth/SendPassword/SendPassword';
+import Book from './pages/Book/Book';
 
 const router = createBrowserRouter([
   {
@@ -40,6 +41,10 @@ const router = createBrowserRouter([
         element: <SendPassword/>
       },
     ]
+  },
+  {
+    path: '/book',
+    element: <Book/>
   },	
   {
 		path: '*',
