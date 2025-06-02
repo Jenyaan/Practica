@@ -2,11 +2,11 @@
 
 namespace App\Rules;
 
-use App\Models\User;
+use App\Models\Genre;
 use Closure;
 use Illuminate\Contracts\Validation\ValidationRule;
 
-class EmailRule implements ValidationRule
+class ExistGenreRule implements ValidationRule
 {
     /**
      * Run the validation rule.
@@ -15,8 +15,8 @@ class EmailRule implements ValidationRule
      */
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
-        if (User::where("email", $value)->get()->isNotEmpty()) {
-            $fail("User with email = $value already exist");
+        if (!Genre::all("id")->contains($value)) {
+            $fail("Genre with id = $value does't exist. Select correct id.");
         }
     }
 }
