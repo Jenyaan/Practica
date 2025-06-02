@@ -3,7 +3,8 @@ import Footer from '../../components/simple/Footer/Footer'
 import Header from '../../components/simple/Header/Header'
 import styles from "./Book.module.css"
 import { Link } from 'react-router-dom'
-import Comments from '../../components/ui/comment/Comments'
+import Comments from '../../components/smart/comment/Comments'
+import LinkBack from '../../components/ui/LinkBack/LinkBack'
 
 const Book = () => {
   const [showComments, setShowComments] = useState(false);
@@ -16,10 +17,7 @@ const Book = () => {
     <div className={styles['container']}>
         <Header/>
         <div className={styles.container_book}>
-        <Link to='/home' className={styles.link_home}>
-            <div><img src="/left-arrow.png" alt="" /></div>
-            <p>На головну</p>
-        </Link>
+        <LinkBack>На головну</LinkBack>
 
         <div className={styles.main_book}>
             <div className={styles.info_book}>

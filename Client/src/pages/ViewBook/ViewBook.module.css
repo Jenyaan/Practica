@@ -1,0 +1,96 @@
+.container{
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background-color: #eeeeee;
+  
+}
+.main{
+    min-height: 100vh;
+}
+.head-read{
+    display: flex;
+    padding-left: 80px;
+    font-size: 28px;
+}
+
+.bookmark-list{
+    margin: auto 200px;
+    font-size: 21px;
+}
+
+.bookmark-item{
+    padding: 0px 5px;
+    color: #EC9704;
+    font-size: 21px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
+    text-decoration:none;
+}
+
+.text-book{
+    position: relative;
+    background-color: white;
+    height: 100%;
+    padding: 50px 80px;
+    margin: 0 80px;
+    border-radius: 24px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    overflow-y: auto; 
+    font-family: 'Segoe UI', sans-serif;
+    font-size: 21px;
+    line-height: 1.6;
+    white-space: pre-wrap;
+}
+
+.bookmark{
+    position: absolute;
+    right: 40px;
+    cursor: pointer;
+}
+
+.text-book::-webkit-scrollbar {
+  width: 16px;
+}
+
+.text-book::-webkit-scrollbar-track {
+  background: transparent;
+  margin: 20px 0;
+}
+
+.text-book::-webkit-scrollbar-thumb {
+  background-color: #bbb;
+  border-radius: 10px;
+}
+
+.page-control {
+  
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  /* gap: 8px; */
+  font-size: 16px;
+  background: #f0f0f0;
+  padding: 60px 8px;
+  border-radius: 999px;
+}
+
+.page-control >  input {
+  font-family: "Gotu", sans-serif;
+  background-color: #D9D9D9;
+  border-radius: 24px;
+  padding: 5px 0px;
+  width: auto;
+  border: none;
+  text-align: center;
+  font-size: 16px;
+  outline: none;
+  appearance: textfield;
+}
+
+.page-control input::-webkit-outer-spin-button,
+.page-control input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}

@@ -10,6 +10,7 @@ import Registrate from './pages/Auth/Registrate/Registrate';
 import CreatePassword from './pages/Auth/CreatePassword/CreatePassword';
 import SendPassword from './pages/Auth/SendPassword/SendPassword';
 import Book from './pages/Book/Book';
+import ViewBook from './pages/ViewBook/ViewBook';
 
 const router = createBrowserRouter([
   {
@@ -45,7 +46,11 @@ const router = createBrowserRouter([
   {
     path: '/book',
     element: <Book/>
-  },	
+  },
+  {
+    path: 'book/1',
+    element: <ViewBook/>
+  },		
   {
 		path: '*',
 		element: <div>Ошибка</div>

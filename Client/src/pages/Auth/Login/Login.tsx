@@ -35,7 +35,7 @@ const Login = () => {
           {...register("email", { required: "Пошта обов’язкова", pattern: { value: /^\S+@\S+$/i, message: "Невірний формат пошти" } })} 
           placeholder="Пошта" className={styles.auth_input} />
         <input 
-          {...register("password", { required: "Пароль обов’язковий", minLength: { value: 6, message: "Мінімум 6 символів" } })} 
+          {...register("password", { required: "Пароль обов’язковий", minLength: { value: 16, message: "Мінімум 16 символів" } })} 
           type="password" placeholder="Пароль" className={styles.auth_input} />
 
           {(errors.email || errors.password || serverMessage) && (

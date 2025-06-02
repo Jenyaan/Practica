@@ -1,9 +1,3 @@
-.container{
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column; 
-}
-
 .home_main{
     flex: 1 1 auto;
     display: flex;

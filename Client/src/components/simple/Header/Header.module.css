@@ -49,6 +49,7 @@
 }
 
 .header_right{
+    position: relative;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -73,12 +74,45 @@
     height: 100%;
 }
 
-.header_dropmenu{
-    width: 24px;
-    height: 24px;
+.header_dropmenu {
+  width: 24px;
+  height: 24px;
+  transition: transform 0.3s ease;
+}
+
+.rotated {
+  transform: rotate(180deg);
 }
 
 .header_dropmenu > img{
     width: auto;
     height: 100%;
+}
+
+.dropdown_menu {
+  position: absolute;
+  top: 60px; /* чуть ниже аватара */
+  right: -10px;
+  background-color: rgb(219, 219, 219);
+  border-radius: 8px;
+  box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.15);
+  list-style: none;
+  padding: 10px 0;
+  margin: 0;
+  width: 150px;
+  z-index: 1000;
+}
+
+.dropdown_menu li {
+  padding: 10px 20px;
+}
+
+.dropdown_menu li:hover {
+  background-color: #999999;
+}
+
+.dropdown_menu a {
+  text-decoration: none;
+  color: black;
+  font-size: 16px;
 }
