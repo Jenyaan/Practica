@@ -29,7 +29,7 @@ class StoreBookRequest extends FormRequest
             "author" => "required|string|max:50",
             "description" => "string|max:500",
             "tags" => "string|max:100",
-            "genres" => "required|min:1",
+            "genres" => "required|array|min:1",
             "genres.*" => ["numeric", "integer", new ExistGenreRule],
             "files" => ["required", "array", "min:1", "max:10", new UniqueFileFormatRule],
             "files.*" => File::types(["pdf", "doc", "docx", "txt", "epub", "rtf", "odt", "djvu", "djv", "fb2"])->max("500mb"),

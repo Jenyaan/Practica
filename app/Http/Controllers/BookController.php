@@ -9,7 +9,6 @@ use App\Models\Book;
 use App\Models\User;
 use Illuminate\Routing\Controllers\HasMiddleware;
 use Illuminate\Routing\Controllers\Middleware;
-use Illuminate\Support\Facades\Storage;
 
 class BookController extends Controller implements HasMiddleware
 {
@@ -61,7 +60,9 @@ class BookController extends Controller implements HasMiddleware
      */
     public function update(UpdateBookRequest $request, Book $book)
     {
-        //
+        $validated = $request->validated();
+        $book = $this->bookService->updateBook($book, $validated);
+        return $book->toResource();
     }
 
     /**
