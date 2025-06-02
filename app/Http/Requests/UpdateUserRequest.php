@@ -2,7 +2,7 @@
 
 namespace App\Http\Requests;
 
-use App\Rules\EmailRule;
+use App\Rules\ExistEmailRule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rules\Password;
 
@@ -25,7 +25,7 @@ class UpdateUserRequest extends FormRequest
     {
         return [
             "name" => "string|alpha|max:30",
-            "email" => ["email", new EmailRule],
+            "email" => ["email", new ExistEmailRule],
             "password" => Password::default(),
         ];
     }

@@ -4,6 +4,7 @@ namespace App\Http\Services;
 
 use App\Models\User;
 use Illuminate\Pagination\AbstractPaginator;
+use Ramsey\Uuid\Uuid;
 use Ren\Http\Services\Utils\AuthUtil;
 
 class UserService
@@ -22,6 +23,7 @@ class UserService
 
     public function createUser(array $data): User
     {
+        $data["user_path_name"] = Uuid::uuid4();
         $user = User::create($data);
         $user->refresh();
         return $user;
