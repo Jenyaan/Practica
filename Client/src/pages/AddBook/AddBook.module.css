@@ -1,0 +1,148 @@
+.main {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 42px 0px;
+  font-family: sans-serif;
+}
+
+h2 {
+  font-weight: 600;
+  font-size: 204x;
+  margin-bottom: 24px;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  width: 420px;
+}
+
+input,
+select,
+textarea,
+button {
+  border: none;
+  border-radius: 8px;
+  padding: 16px;
+  font-size: 16px;
+  background: #e0e0e0;
+  outline: none;
+}
+
+select {
+  appearance: none;
+  background-image: url("/icons/dropmenu.svg");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  background-size: 16px;
+}
+
+textarea {
+  resize: none;
+}
+
+.fileItem {
+  display: flex;
+  align-items: center;
+  background-color: #ccc;
+  border-radius: 6px;
+  padding: 6px 10px;
+  margin-bottom: 8px;
+  position: relative;
+}
+
+.fileIcon {
+  width: 24px;
+  height: 24px;
+  margin-right: 10px;
+}
+
+.fileName {
+  flex-grow: 1;
+  font-size: 14px;
+}
+.filesContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+
+.removeBtn {
+  background: none;
+  border: none;
+  font-size: 18px;
+  cursor: pointer;
+  padding: 0 6px;
+}
+
+.addFileBtn {
+  display: block;
+  text-align: center;
+  padding: 10px;
+  background-color: #ddd;
+  border: 2px dashed #aaa;
+  border-radius: 6px;
+  cursor: pointer;
+  margin-top: 10px;
+}
+
+
+.selectedFile {
+  margin-top: 6px;
+  font-size: 14px;
+  color: #444;
+}
+
+
+.fileDrop {
+  background: #e0e0e0;
+  border: 2px dashed #aaa;
+  border-radius: 8px;
+  padding: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.fileItem {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-radius: 4px;
+  padding: 8px;
+  font-size: 14px;
+}
+
+.fileIcon {
+  width: 20px;
+  margin-right: 8px;
+}
+
+.removeBtn {
+  background: transparent;
+  border: none;
+  color: black;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.addFileLabel {
+  display: block;
+  margin-top: 4px;
+  text-align: center;
+  padding: 6px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+
+.submit {
+  background: #FFC65C;
+  color: black;
+  font-size: 18px;
+  font-weight: 500;
+  cursor: pointer;
+}

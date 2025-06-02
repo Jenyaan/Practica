@@ -11,6 +11,7 @@ import CreatePassword from './pages/Auth/CreatePassword/CreatePassword';
 import SendPassword from './pages/Auth/SendPassword/SendPassword';
 import Book from './pages/Book/Book';
 import ViewBook from './pages/ViewBook/ViewBook';
+import AddBook from './pages/AddBook/AddBook';
 
 const router = createBrowserRouter([
   {
@@ -46,6 +47,10 @@ const router = createBrowserRouter([
   {
     path: '/book',
     element: <Book/>
+  },
+  {
+    path: '/create-book',
+    element: <AddBook/>
   },
   {
     path: 'book/1',

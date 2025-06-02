@@ -41,11 +41,14 @@
     flex: 1;
     font-size: 16px;
 }
-
-.header_search > img{
-    width: 20px;
-    height: 20px;
+.header_search_link{
+    width: 30px;
+    height: 30px;
     cursor: pointer;
+}
+.header_search_link > img{
+    width: auto;
+    height: 100%;
 }
 
 .header_right{
@@ -75,6 +78,7 @@
 }
 
 .header_dropmenu {
+    cursor: pointer;
   width: 24px;
   height: 24px;
   transition: transform 0.3s ease;
@@ -91,7 +95,7 @@
 
 .dropdown_menu {
   position: absolute;
-  top: 60px; /* чуть ниже аватара */
+  top: 60px;
   right: -10px;
   background-color: rgb(219, 219, 219);
   border-radius: 8px;
@@ -111,7 +115,7 @@
   background-color: #999999;
 }
 
-.dropdown_menu a {
+.dropdown_menu_link {
   text-decoration: none;
   color: black;
   font-size: 16px;

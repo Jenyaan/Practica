@@ -1,5 +1,6 @@
 import { useState } from "react";
 import styles from "../Header/Header.module.css";
+import { Link } from "react-router-dom";
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -9,12 +10,10 @@ const Header = () => {
   return (
     <header className={styles["header"]}>
       <div className={styles["header_left"]}>
-        <div className={styles["header_logo"]}>
-          <img src="/logo.svg" alt="" />
-        </div>
+        <Link to="/home" className={styles["header_logo"]}><img src="/logo.svg" alt="" /></Link>
         <div className={styles["header_search"]}>
           <input type="text" />
-          <a href="#"><img src="/icons/search.svg" alt="" /></a>
+          <Link to='#' className={styles["header_search_link"]}><img src="/icons/search.svg" alt="" /></Link>
         </div>
       </div>
       <div className={styles["header_right"]}>
@@ -30,9 +29,9 @@ const Header = () => {
         </div>
         {isMenuOpen && (
           <ul className={styles["dropdown_menu"]}>
-            <li><a href="#">Профіль</a></li>
-            <li><a href="#">Налаштування</a></li>
-            <li><a href="#">Вийти</a></li>
+            <li><Link to="#" className={styles["dropdown_menu_link"]}>Профіль</Link></li>
+            <li><Link to="/create-book" className={styles["dropdown_menu_link"]}>Додати книгу</Link></li>
+            <li><Link to="#" className={styles["dropdown_menu_link"]}>Вийти</Link></li>
           </ul>
         )}
       </div>
