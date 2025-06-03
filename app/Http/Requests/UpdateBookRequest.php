@@ -26,7 +26,9 @@ class UpdateBookRequest extends FormRequest
     {
         return [
             "title" => "string|min:10|max:50",
+            "image" => File::image()->max("5mb"),
             "author" => "string|max:50",
+            "year" => "numeric|integer",
             "description" => "string|max:500",
             "tags" => "string|max:100",
             "genres" => "array|min:1",

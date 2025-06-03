@@ -34,7 +34,11 @@ class BookService
         if (array_key_exists("filter_by", $query)) {
             collect($query["filter_by"])->transform(fn($value) => explode(":", $value))
                 ->each(function ($filter) use (&$books) {
-                    $books = $books->where($filter[0], $filter[1]);
+                    if ($filter[0] === "year") {
+                        $books = $books->where($filter[0], $filter[1]);
+                    } else {
+                        $books = $books->whereFullText($filter[0], $filter[1]);
+                    }
                 });
         }
         if (array_key_exists("sort_by", $query)) {
@@ -57,16 +61,17 @@ class BookService
 
         $book = new Book;
         foreach ($data as $key => $value) {
-            if (!Str::contains($key, ["genres", "files"])) {
+            if (!Str::contains($key, ["genres", "files", "image"])) {
                 $book->$key = $value;
             }
         }
 
         $book->base_file_path = Uuid::uuid4();
+        $book->image_url = $data["image"]->storePublicly("covers/" . $user->user_path_name, "public");
         $user->books()->save($book);
         try {
             $this->setGenres($book, $data["genres"]);
-            $this->setFiles($book, $user->user_path_name, $data["files"]);
+            $this->setFiles($book, "covers/" . $user->user_path_name, $data["files"]);
         } catch (Exception $e) {
             $book->delete();
             throw $e;
@@ -87,7 +92,7 @@ class BookService
         }
 
         foreach ($data as $key => $value) {
-            if (!Str::contains($key, ["genres", "files", "formats"])) {
+            if (!Str::contains($key, ["genres", "files", "formats", "image"])) {
                 $book->$key = $value;
             }
         }
@@ -99,7 +104,12 @@ class BookService
         } elseif (array_key_exists("files", $data)) {
             $this->syncFiles($book, $user, $book->formats->toArray(), $data["files"]);
         }
-        $book->load("formats");
+        if (array_key_exists("image", $data)) {
+            Storage::disk("public")->delete($book->image_url);
+            $book->image_url = $data["image"]->storePublicly("covers/" . $user->user_path_name, "public");
+        }
+        $book->save();
+        // $book->load("formats", "genres");
 
         return $book;
     }
@@ -213,6 +223,7 @@ class BookService
         $relDir = $userBasePath . "/" . $fileBasePath;
         $deletedFilesSizeByte = collect(Storage::files($relDir))->sum(fn($file) => Storage::size($file));
         Storage::deleteDirectory($relDir);
+        Storage::disk("public")->deleteDirectory("covers/" . $userBasePath);
         return $deletedFilesSizeByte;
     }
 

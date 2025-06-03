@@ -26,7 +26,9 @@ class StoreBookRequest extends FormRequest
     {
         return [
             "title" => "required|string|min:10|max:50",
+            "image" => File::image()->max("5mb"),
             "author" => "required|string|max:50",
+            "year" => "numeric|integer",
             "description" => "string|max:500",
             "tags" => "string|max:100",
             "genres" => "required|array|min:1",

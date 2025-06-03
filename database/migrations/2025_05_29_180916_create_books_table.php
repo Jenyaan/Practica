@@ -14,7 +14,9 @@ return new class extends Migration
         Schema::create("books", function (Blueprint $table) {
             $table->id();
             $table->string("title", 50);
+            $table->string("image_url", 100)->nullable();
             $table->string("author", 50);
+            $table->unsignedSmallInteger("year")->nullable();
             $table->string("description", 500)->nullable();
             $table->string("tags", 100)->nullable();
             $table->boolean("public")->default(true);
