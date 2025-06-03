@@ -30,10 +30,12 @@ class BookService
     public function createBook(array $data, User $user): Book
     {
         $this->authUtil->checkUserAffiliation($user, "Try to add book for another user.");
-        if ($this->isBookExist($data["title"], $user))
+        if ($this->isBookExist($data["title"], $user)) {
             throw new BadRequestHttpException("Book with title = \"" . $data["title"] . "\" already exist.");
-        if (!$this->hasEnoughSpace($user, $data["files"]))
+        }
+        if (!$this->hasEnoughSpaceToUpload($user->plan, $user->files_size_byte, $data["files"])) {
             throw new BadRequestHttpException("Not enough space for files.");
+        }
 
         $book = new Book;
         foreach ($data as $key => $value) {
@@ -62,8 +64,9 @@ class BookService
     {
         $user = $book->user;
         $this->authUtil->checkUserAffiliation($user, "Try to add book for another user.");
-        if (array_key_exists("title", $data) && $this->isBookExist($data["title"], $user))
+        if (array_key_exists("title", $data) && $this->isBookExist($data["title"], $user)) {
             throw new BadRequestHttpException("Book with title = \"" . $data["title"] . "\" already exist.");
+        }
 
         foreach ($data as $key => $value) {
             if (!Str::contains($key, ["genres", "files", "formats"])) {
@@ -75,7 +78,10 @@ class BookService
         }
         if (array_key_exists("formats", $data)) {
             $this->syncFiles($book, $user, $data["formats"], array_key_exists("files", $data) ? $data["files"] : []);
+        } elseif (array_key_exists("files", $data)) {
+            $this->syncFiles($book, $user, $book->formats->toArray(), $data["files"]);
         }
+        $book->load("formats");
 
         return $book;
     }
@@ -135,26 +141,27 @@ class BookService
         $relDir = $user->user_path_name . "/" . $book->base_file_path;
         $formatCollection = collect($formats);
         $avaliableFormats = Format::all();
-        $extId = [];
+        $extId = collect();
 
         $discFiles = collect(Storage::files($relDir));
         $removeFiles = $discFiles->reject(function ($file) use ($formatCollection, $avaliableFormats, $extId) {
             $fileExt = str($file)->explode(".")->last();
             $contains = $formatCollection->contains($fileExt);
             if ($contains) {
-                $extId[] = $avaliableFormats->firstWhere("name", $fileExt);
+                $extId->push($avaliableFormats->firstWhere("name", $fileExt)->id);
             }
             return $contains;
         });
         Storage::delete($removeFiles->toArray());
 
-        if (!$this->hasEnoughSpace($user, $files))
+        if (!$this->hasEnoughSpaceToUpload($user->plan, $user->files_size_byte, $files)) {
             throw new BadRequestHttpException("Not enough space for files.");
+        }
 
         if (!empty($files)) {
-            $extId[] = $this->uploadFiles($files, $relDir, $book->base_file_path);
+            $extId = $extId->concat($this->uploadFiles($files, $relDir, $book->base_file_path));
         }
-        $this->updateFormats($book, $extId);
+        $this->updateFormats($book, $extId->toArray());
     }
 
     private function setFiles(Book &$book, string $userPathName, array $data): void
@@ -170,22 +177,17 @@ class BookService
         return $user->books()->where("title", $title)->get()->isNotEmpty();
     }
 
-    private function hasEnoughSpace(User $user, array $files): bool
+    private function hasEnoughSpaceToUpload(string $plan, int $userSpace, array $files): bool
     {
         $inputSizeByte = $this->uploadFileSizeByte($files);
 
-        $maxSpaceByte = 0;
-        if ($user->plan === "limited") {
-            $maxSpaceByte = 1073741824;
-        } elseif ($user->plan === "pro") {
-            $maxSpaceByte = 21474836480;
-        }
+        $maxSpaceByte = match ($plan) {
+            "limited" => 1073741824,
+            "pro" => 21474836480,
+        };
 
-        $totalSizeByte = $inputSizeByte + $user->files_size_byte;
-        if (
-            $user->files_size_byte > $maxSpaceByte
-            || $user->files_size_byte > $totalSizeByte
-        ) {
+        $totalSizeByte = $inputSizeByte + $userSpace;
+        if ($userSpace > $maxSpaceByte || $totalSizeByte > $maxSpaceByte) {
             return false;
         }
         return true;
