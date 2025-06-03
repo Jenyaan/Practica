@@ -71,7 +71,7 @@ class BookService
         $user->books()->save($book);
         try {
             $this->setGenres($book, $data["genres"]);
-            $this->setFiles($book, "covers/" . $user->user_path_name, $data["files"]);
+            $this->setFiles($book, $user->user_path_name, $data["files"]);
         } catch (Exception $e) {
             $book->delete();
             throw $e;
