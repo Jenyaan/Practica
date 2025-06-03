@@ -24,4 +24,6 @@ Route::prefix("v1/auth")
     });
 
 Route::apiResource("v1/users", UserController::class);
-Route::apiResource("v1/users.books", BookController::class)->shallow(); //TODO get all public books
+
+Route::get("v1/books", [BookController::class, "public"])->name("books.public");
+Route::apiResource("v1/users.books", BookController::class)->shallow();

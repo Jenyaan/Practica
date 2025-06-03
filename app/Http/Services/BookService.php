@@ -28,6 +28,23 @@ class BookService
         return $user->books()->paginate();
     }
 
+    public function listPublicBooks(array $query): AbstractPaginator
+    {
+        $books = Book::where("public", true);
+        if (array_key_exists("filter_by", $query)) {
+            collect($query["filter_by"])->transform(fn($value) => explode(":", $value))
+                ->each(function ($filter) use (&$books) {
+                    $books = $books->where($filter[0], $filter[1]);
+                });
+        }
+        if (array_key_exists("sort_by", $query)) {
+            $orderBy = array_key_exists("order_by", $query) ? $query["order_by"] : "asc";
+            $books = $books->orderBy($query["sort_by"], $orderBy);
+        }
+        $perPage = array_key_exists("per_page", $query) ? $query["per_page"] : 15;
+        return $books->paginate($perPage);
+    }
+
     public function createBook(array $data, User $user): Book
     {
         $this->authUtil->checkUserAffiliation($user, "Try to add book for another user.");

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\PublicBookRequest;
 use App\Http\Requests\StoreBookRequest;
 use App\Http\Requests\UpdateBookRequest;
 use App\Http\Services\BookService;
@@ -25,7 +26,7 @@ class BookController extends Controller implements HasMiddleware
     public static function middleware(): array
     {
         return [
-            new Middleware("auth"),
+            new Middleware("auth", except: ["public"]),
         ];
     }
 
@@ -35,6 +36,15 @@ class BookController extends Controller implements HasMiddleware
     public function index(User $user)
     {
         return $this->bookService->listUserBooks($user)->toResourceCollection();
+    }
+
+    /**
+     * Display public books
+     */
+    public function public(PublicBookRequest $request)
+    {
+        $validated = $request->validated();
+        return $this->bookService->listPublicBooks($validated)->toResourceCollection();
     }
 
     /**
