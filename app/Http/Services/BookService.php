@@ -194,7 +194,7 @@ class BookService
     {
         $relDir = $userBasePath . "/" . $fileBasePath;
         $deletedFilesSizeByte = collect(Storage::files($relDir))->sum(fn($file) => Storage::size($file));
-        Storage::deleteDirectory($fileBasePath);
+        Storage::deleteDirectory($relDir);
         return $deletedFilesSizeByte;
     }
 
