@@ -31,7 +31,7 @@ class UpdateBookRequest extends FormRequest
             "tags" => "string|max:100",
             "genres" => "array|min:1",
             "genres.*" => ["numeric", "integer", new ExistGenreRule],
-            "formats" => "nullable|array",
+            "formats" => "array",
             "formats.*" => "nullable|exists:formats,name",
             "files" => ["array", "min:1", "max:10", new UniqueFileFormatRule],
             "files.*" => File::types(["pdf", "doc", "docx", "txt", "epub", "rtf", "odt", "djvu", "djv", "fb2"])->max("500mb"),

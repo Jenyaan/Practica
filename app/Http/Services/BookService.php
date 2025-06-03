@@ -24,6 +24,7 @@ class BookService
 
     public function listUserBooks(User $user): AbstractPaginator
     {
+        $this->authUtil->checkUserAffiliation($user, "Try to list book for another user.");
         return $user->books()->paginate();
     }
 
@@ -63,7 +64,7 @@ class BookService
     public function updateBook(Book $book, array $data): Book
     {
         $user = $book->user;
-        $this->authUtil->checkUserAffiliation($user, "Try to add book for another user.");
+        $this->authUtil->checkUserAffiliation($user, "Try to update book for another user.");
         if (array_key_exists("title", $data) && $this->isBookExist($data["title"], $user)) {
             throw new BadRequestHttpException("Book with title = \"" . $data["title"] . "\" already exist.");
         }
@@ -89,7 +90,7 @@ class BookService
     public function deleteBook(Book $book): Book
     {
         $user = $book->user;
-        $this->authUtil->checkUserAffiliation($user, "Try to add book for another user.");
+        $this->authUtil->checkUserAffiliation($user, "Try to delete book for another user.");
         $user->files_size_byte -= $this->deleteFiles($user->user_path_name, $book->base_file_path);
         $user->save();
         $book->load(["genres", "formats"]);
