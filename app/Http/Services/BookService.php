@@ -54,7 +54,7 @@ class BookService
             throw $e;
         }
         $book->refresh();
-        $user->files_size_byte = $this->uploadFileSizeByte($data["files"]);
+        $user->files_size_byte += $this->uploadFilesSizeByte($data["files"]);
         $user->save();
 
         return $book;
@@ -83,6 +83,17 @@ class BookService
         }
         $book->load("formats");
 
+        return $book;
+    }
+
+    public function deleteBook(Book $book): Book
+    {
+        $user = $book->user;
+        $this->authUtil->checkUserAffiliation($user, "Try to add book for another user.");
+        $user->files_size_byte -= $this->deleteFiles($user->user_path_name, $book->base_file_path);
+        $user->save();
+        $book->load(["genres", "formats"]);
+        $book->delete();
         return $book;
     }
 
@@ -142,6 +153,7 @@ class BookService
         $formatCollection = collect($formats);
         $avaliableFormats = Format::all();
         $extId = collect();
+        $currentUserSpace = $user->files_size_byte;
 
         $discFiles = collect(Storage::files($relDir));
         $removeFiles = $discFiles->reject(function ($file) use ($formatCollection, $avaliableFormats, $extId) {
@@ -152,6 +164,8 @@ class BookService
             }
             return $contains;
         });
+
+        $currentUserSpace -= $removeFiles->map(fn($file) => Storage::size($file))->sum();
         Storage::delete($removeFiles->toArray());
 
         if (!$this->hasEnoughSpaceToUpload($user->plan, $user->files_size_byte, $files)) {
@@ -162,6 +176,10 @@ class BookService
             $extId = $extId->concat($this->uploadFiles($files, $relDir, $book->base_file_path));
         }
         $this->updateFormats($book, $extId->toArray());
+
+        $currentUserSpace += $this->uploadFilesSizeByte($files);
+        $user->files_size_byte = $currentUserSpace;
+        $user->save();
     }
 
     private function setFiles(Book &$book, string $userPathName, array $data): void
@@ -172,6 +190,14 @@ class BookService
         $this->setFormats($book, $extId);
     }
 
+    private function deleteFiles(string $userBasePath, string $fileBasePath): int
+    {
+        $relDir = $userBasePath . "/" . $fileBasePath;
+        $deletedFilesSizeByte = collect(Storage::files($relDir))->sum(fn($file) => Storage::size($file));
+        Storage::deleteDirectory($fileBasePath);
+        return $deletedFilesSizeByte;
+    }
+
     private function isBookExist(string $title, User $user): bool
     {
         return $user->books()->where("title", $title)->get()->isNotEmpty();
@@ -179,7 +205,7 @@ class BookService
 
     private function hasEnoughSpaceToUpload(string $plan, int $userSpace, array $files): bool
     {
-        $inputSizeByte = $this->uploadFileSizeByte($files);
+        $inputSizeByte = $this->uploadFilesSizeByte($files);
 
         $maxSpaceByte = match ($plan) {
             "limited" => 1073741824,
@@ -193,7 +219,7 @@ class BookService
         return true;
     }
 
-    private function uploadFileSizeByte(array $files): int
+    private function uploadFilesSizeByte(array $files): int
     {
         return collect($files)->map(fn($file) => $file->getSize())->sum();
     }

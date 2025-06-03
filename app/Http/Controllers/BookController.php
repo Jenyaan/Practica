@@ -70,6 +70,6 @@ class BookController extends Controller implements HasMiddleware
      */
     public function destroy(Book $book)
     {
-        //
+        return $this->bookService->deleteBook($book)->toResource();
     }
 }
