@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\PublicBookRequest;
+use App\Http\Requests\GETBookRequest;
 use App\Http\Requests\StoreBookRequest;
 use App\Http\Requests\UpdateBookRequest;
 use App\Http\Services\BookService;
@@ -33,15 +33,16 @@ class BookController extends Controller implements HasMiddleware
     /**
      * Display a listing of the resource.
      */
-    public function index(User $user)
+    public function index(GETBookRequest $request, User $user)
     {
-        return $this->bookService->listUserBooks($user)->toResourceCollection();
+        $validated = $request->validated();
+        return $this->bookService->showBook($validated)->toResource();
     }
 
     /**
      * Display public books
      */
-    public function public(PublicBookRequest $request)
+    public function public(GETBookRequest $request)
     {
         $validated = $request->validated();
         return $this->bookService->listPublicBooks($validated)->toResourceCollection();

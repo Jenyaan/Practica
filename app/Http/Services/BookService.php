@@ -12,7 +12,6 @@ use Illuminate\Support\Str;
 use Ramsey\Uuid\Uuid;
 use Ren\Http\Services\Utils\AuthUtil;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class BookService
 {
@@ -23,29 +22,20 @@ class BookService
         $this->authUtil = $authUtil;
     }
 
-    public function listUserBooks(User $user): AbstractPaginator
+    public function listUserBooks(User $user, array $query): AbstractPaginator
     {
         $this->authUtil->checkUserAffiliation($user, "Try to list book for another user.");
-        return $user->books()->paginate();
+        $books = $user->books();
+        $this->filterBooks($books, $query);
+
+        $perPage = array_key_exists("per_page", $query) ? $query["per_page"] : 15;
+        return $books->paginate($perPage);
     }
 
     public function listPublicBooks(array $query): AbstractPaginator
     {
         $books = Book::where("public", true);
-        if (array_key_exists("filter_by", $query)) {
-            collect($query["filter_by"])->transform(fn($value) => explode(":", $value))
-                ->each(function ($filter) use (&$books) {
-                    if ($filter[0] === "year") {
-                        $books = $books->where($filter[0], $filter[1]);
-                    } else {
-                        $books = $books->whereFullText($filter[0], $filter[1]);
-                    }
-                });
-        }
-        if (array_key_exists("sort_by", $query)) {
-            $orderBy = array_key_exists("order_by", $query) ? $query["order_by"] : "asc";
-            $books = $books->orderBy($query["sort_by"], $orderBy);
-        }
+        $this->filterBooks($books, $query);
 
         $perPage = array_key_exists("per_page", $query) ? $query["per_page"] : 15;
         return $books->paginate($perPage);
@@ -85,11 +75,12 @@ class BookService
         return $book;
     }
 
-    public function showBook(Book $book): Book{
-        if(!$book->public){
+    public function showBook(Book $book): Book
+    {
+        if (!$book->public) {
             $this->authUtil->checkUserAffiliation($book->user, "Try to get not public book");
         }
-        
+
         return $book;
     }
 
@@ -260,5 +251,24 @@ class BookService
     private function uploadFilesSizeByte(array $files): int
     {
         return collect($files)->map(fn($file) => $file->getSize())->sum();
+    }
+
+    private function filterBooks(&$books, array $query): void
+    {
+        $books = Book::where("public", true);
+        if (array_key_exists("filter_by", $query)) {
+            collect($query["filter_by"])->transform(fn($value) => explode(":", $value))
+                ->each(function ($filter) use (&$books) {
+                    if ($filter[0] === "year") {
+                        $books = $books->where($filter[0], $filter[1]);
+                    } else {
+                        $books = $books->whereFullText($filter[0], $filter[1]);
+                    }
+                });
+        }
+        if (array_key_exists("sort_by", $query)) {
+            $orderBy = array_key_exists("order_by", $query) ? $query["order_by"] : "asc";
+            $books = $books->orderBy($query["sort_by"], $orderBy);
+        }
     }
 }
