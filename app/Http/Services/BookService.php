@@ -12,6 +12,7 @@ use Illuminate\Support\Str;
 use Ramsey\Uuid\Uuid;
 use Ren\Http\Services\Utils\AuthUtil;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class BookService
 {
@@ -45,6 +46,10 @@ class BookService
             $orderBy = array_key_exists("order_by", $query) ? $query["order_by"] : "asc";
             $books = $books->orderBy($query["sort_by"], $orderBy);
         }
+        // if(!$books->exists()){
+        //     throw new NotFoundHttpException("Books with fileters = " . serialize($query["filter_by"]) . " not found");
+        // }
+
         $perPage = array_key_exists("per_page", $query) ? $query["per_page"] : 15;
         return $books->paginate($perPage);
     }
@@ -67,7 +72,7 @@ class BookService
         }
 
         $book->base_file_path = Uuid::uuid4();
-        $book->image_url = $data["image"]->storePublicly("covers/" . $user->user_path_name, "public");
+        $book->image_url = $data["image"]->storePublicly("covers/" . $book->base_file_path, "public");
         $user->books()->save($book);
         try {
             $this->setGenres($book, $data["genres"]);
@@ -118,6 +123,7 @@ class BookService
         $user = $book->user;
         $this->authUtil->checkUserAffiliation($user, "Try to delete book for another user.");
         $user->files_size_byte -= $this->deleteFiles($user->user_path_name, $book->base_file_path);
+        Storage::disk("public")->deleteDirectory("covers/" . $book->base_file_path);
         $user->save();
         $book->load(["genres", "formats"]);
         $book->delete();
@@ -222,7 +228,6 @@ class BookService
         $relDir = $userBasePath . "/" . $fileBasePath;
         $deletedFilesSizeByte = collect(Storage::files($relDir))->sum(fn($file) => Storage::size($file));
         Storage::deleteDirectory($relDir);
-        Storage::disk("public")->deleteDirectory("covers/" . $userBasePath);
         return $deletedFilesSizeByte;
     }
 

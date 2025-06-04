@@ -30,8 +30,11 @@ class BookmarkController extends Controller
      */
     public function store(Request $request, User $user, Book $book)
     {
-        $validated = $request->validate(["page" => "required|numeric|integer"]);
-        $bookmark = $this->bookmarkService->createBookmark($book, $validated["page"]);
+        $validated = $request->validate([
+            "page" => "required|numeric|integer|unique:bookmarks",
+            "name" => "string|max:15|alpha"
+        ]);
+        $bookmark = $this->bookmarkService->createBookmark($book, $validated);
         return response($bookmark, 201);
     }
 

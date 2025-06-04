@@ -49,6 +49,7 @@ return new class extends Migration
 
         Schema::create("bookmarks", function (Blueprint $table) {
             $table->id();
+            $table->string("name", 20)->nullable();
             $table->unsignedSmallInteger("page");
             $table->timestamp("created_at");
             $table->foreignId("book_id")->constrained()->cascadeOnDelete()->cascadeOnUpdate();
