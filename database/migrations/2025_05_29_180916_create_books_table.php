@@ -46,6 +46,13 @@ return new class extends Migration
             $table->foreignId("book_id")->constrained()->cascadeOnDelete()->cascadeOnUpdate();
             $table->foreignId("format_id")->constrained()->cascadeOnDelete()->cascadeOnUpdate();
         });
+
+        Schema::create("bookmarks", function (Blueprint $table) {
+            $table->id();
+            $table->unsignedSmallInteger("page");
+            $table->timestamp("created_at");
+            $table->foreignId("book_id")->constrained()->cascadeOnDelete()->cascadeOnUpdate();
+        });
     }
 
     /**
@@ -53,6 +60,7 @@ return new class extends Migration
      */
     public function down(): void
     {
+        Schema::dropIfExists("bookmarks");
         Schema::dropIfExists("formats");
         Schema::dropIfExists("book_format");
         Schema::dropIfExists("genres");

@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Routing\Controllers\HasMiddleware;
 use Illuminate\Routing\Controllers\Middleware;
 use Illuminate\Support\Facades\Storage;
+use Ren\Http\Services\Utils\AuthUtil;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class DownloadController extends Controller implements HasMiddleware
@@ -21,9 +22,13 @@ class DownloadController extends Controller implements HasMiddleware
         ];
     }
 
-    public function download(Book $book, string $format)
+    public function download(AuthUtil $authUtil, Book $book, string $format)
     {
         $user = $book->user;
+        if(!$book->public){
+            $authUtil->checkUserAffiliation($user, "This book is not public");
+        }
+
         $filePath = $user->user_path_name . "/" . $book->base_file_path . "/" . $book->base_file_path . "." . $format;
         if (!Storage::exists($filePath)) {
             if (empty(Storage::files($filePath))) {

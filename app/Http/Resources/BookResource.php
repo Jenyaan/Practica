@@ -23,6 +23,7 @@ class BookResource extends JsonResource
             "genres" => $this->genres->map(fn($item) => $item->name),
             "description" => $this->description,
             "tags" => $this->tags,
+            "bookmarks"=>$this->bookmarks->map(fn($item) => $item->page),
             "public" => $this->public,
             "formats" => $this->formats->map(fn($item) => $item->name),
             "user_id" => $this->user->id,

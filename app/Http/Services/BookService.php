@@ -109,7 +109,6 @@ class BookService
             $book->image_url = $data["image"]->storePublicly("covers/" . $user->user_path_name, "public");
         }
         $book->save();
-        // $book->load("formats", "genres");
 
         return $book;
     }
