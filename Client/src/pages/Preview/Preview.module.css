@@ -17,6 +17,26 @@
     gap: 57px;
 }
 
+.home_button{
+    text-decoration: none;
+    display: flex;
+    justify-content: center;
+    width: 20%;
+    padding: 15px;
+    background: #FFC059;
+    color: rgb(0, 0, 0);
+    font-size: 21px;
+    border: none;
+    border-radius: 24px;
+    margin-top: 10px;
+    cursor: pointer;
+}
+
+.home_button:hover{
+    background: #ffb641;
+}
+
+
 .home_description > h1{
     text-align: center;
     font-size: 40px;

@@ -12,6 +12,9 @@ import SendPassword from './pages/Auth/SendPassword/SendPassword';
 import Book from './pages/Book/Book';
 import ViewBook from './pages/ViewBook/ViewBook';
 import AddBook from './pages/AddBook/AddBook';
+import { Provider } from 'react-redux';
+import { store } from './store/store';
+import Profile from './pages/Profile/Profile';
 
 const router = createBrowserRouter([
   {
@@ -21,6 +24,10 @@ const router = createBrowserRouter([
   {
     path: '/home',
     element: <Home/>,
+  },
+  {
+    path: '/profile',
+    element: <Profile/>,
   },
   {
     path: '/auth',
@@ -64,6 +71,8 @@ const router = createBrowserRouter([
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <RouterProvider router={router} />
+    <Provider store={store}>
+      <RouterProvider router={router} />
+    </Provider>
   </StrictMode>,
 )

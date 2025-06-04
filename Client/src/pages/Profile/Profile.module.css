@@ -1,0 +1,89 @@
+.error {
+  color: red;
+  font-size: 14px;
+  margin-top: 4px;
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.profile_main {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  padding: 40px 20px;
+}
+
+.card {
+  background-color: #f8f8f8;
+  border-radius: 20px;
+  padding: 90px 100px;
+  max-width: 900px;
+  margin-bottom: 100px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 40px;
+  margin-bottom: 30px;
+}
+
+.field_group {
+  min-width: 380px;
+  display: flex;
+  flex-direction: column;
+}
+
+.input {
+  background-color: #fff;
+  border-radius: 10px;
+  padding: 14px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  margin-top: 5px;
+}
+
+.input_readonly {
+  background-color: #c9c9c9;
+  border-radius: 10px;
+  padding: 14px;
+  font-size: 16px;
+  margin-top: 5px;
+  border: none;
+  color: #333;
+}
+
+.change_link {
+  margin-left: 10px;
+  color: #f39c12;
+  font-size: 16px;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.update_button {
+  background-color: #fbb03b;
+  color: #000;
+  border: none;
+  padding: 15px 30px;
+  font-size: 16px;
+  border-radius: 25px;
+  cursor: pointer;
+  margin: 50px auto 0 auto; /* Центрування по горизонталі */
+  display: block;
+}
+
+
+.card h2 {
+  text-align: center;
+  margin-bottom: 40px;
+  font-size: 28px;
+}

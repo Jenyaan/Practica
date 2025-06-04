@@ -1,0 +1,72 @@
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.3); /* трохи темніше */
+  backdrop-filter: blur(4px); /* додає блюр */
+  -webkit-backdrop-filter: blur(4px); /* підтримка для Safari */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal {
+  width: 600px;
+  height: 180px;
+  background: #fff;
+  padding: 25px 30px;
+  border-radius: 15px;
+  position: relative;
+  min-width: 300px;
+  text-align: center;
+}
+
+.close {
+  position: absolute;
+  top: 15px;
+  right: 25px;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.close img {
+  width: auto;
+  height: 100%;
+}
+
+
+.title {
+  margin-top: 40px;
+  margin-bottom: 20px;
+  font-weight: 500;
+  font-size: 21px;
+}
+
+.buttons {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.formatButton {
+  background-color: #ffa726;
+  color: rgb(0, 0, 0);
+  border: none;
+  border-radius: 20px;
+  padding: 8px 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.formatButton:hover {
+  background-color: #fb8c00;
+}

@@ -5,9 +5,24 @@ import styles from "./Book.module.css"
 import { Link } from 'react-router-dom'
 import Comments from '../../components/smart/comment/Comments'
 import LinkBack from '../../components/ui/LinkBack/LinkBack'
+import ModalDownload from '../../components/ui/ModalDownload/ModalDownload'
+import ModalComment from '../../components/ui/ModalComment/ModalComment'
 
 const Book = () => {
   const [showComments, setShowComments] = useState(false);
+  const [showDownLoadModal, setShowDownLoadModal] = useState<boolean>(false);
+  const [showCommentdModal, setShowCommentdModal] = useState<boolean>(false);
+
+
+  const handleDownload = (format: string) => {
+    console.log(`Формат обрано: ${format}`);
+    setShowDownLoadModal(false);
+  };
+
+  const handleComment = (text: string, stars: number) => {
+    console.log('Коментар:', text, 'Оцінка:', stars);
+    setShowCommentdModal(false);
+  };
 
   const toggleComments = () => {
     setShowComments(prev => !prev);
@@ -31,7 +46,10 @@ const Book = () => {
             </div>
 
             <div className={styles.description_book}>
-                <p>Жанр: <span style={{ textDecoration: "underline" }}>Психологія</span></p>
+                <div className={styles.description_book_raiting}>
+                  <p>Жанр: <span style={{ textDecoration: "underline" }}>Психологія</span></p>
+                  <p>Оцінка: 4.7 / 5</p>
+                </div>
                 <p>Автор: Роберт Грін</p>
 
                 <div className={styles.description_about_book}>
@@ -55,9 +73,16 @@ const Book = () => {
                             src="/icons/dropmenu.svg"
                             alt=""
                             className={showComments ? styles.rotated : ""}
-                            /></div>
+                            />
+                        </div>
                     </div>
-                    <a href="">+ Додати коментар</a>
+                    <a href="" onClick={(e) => { e.preventDefault(); setShowCommentdModal(true); }}>+ Додати коментар</a>
+                    {showCommentdModal && (
+                        <ModalComment
+                        onClose={() => setShowCommentdModal(false)}
+                        onSubmit={handleComment}
+                        />
+                    )}
                 </div>
                 {showComments && <Comments />}
 
@@ -70,7 +95,13 @@ const Book = () => {
             </div>
             <div className={styles.button_book}>
                 <button className={styles.button_book_orange}>Читати онлайн</button>
-                <button className={styles.button_book_black}>Завантажити</button>
+                <button className={styles.button_book_black} onClick={() => setShowDownLoadModal(true)}>Завантажити</button>
+                      {showDownLoadModal && (
+                        <ModalDownload
+                        onClose={() => setShowDownLoadModal(false)}
+                        onDownload={handleDownload}
+                        />
+                      )}
             </div>
             </div>
         </div>

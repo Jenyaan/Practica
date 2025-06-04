@@ -1,19 +1,27 @@
 import styles from '../../../overlays/Auth/Auth.module.css';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import type { RegistrateRequest } from '../../../models/AuthModel';
 import axios from 'axios';
 import { PREFIX } from '../../../api/API';
+import { registration } from '../../../store/auth.slice';
+import { useDispatch, useSelector } from 'react-redux';
+import type { AppDispath, RootState } from '../../../store/store';
 
 const Registrate = () => {
   const { register, handleSubmit, watch, formState: { errors } } = useForm();
   const password = watch('password');
   const [serverMessage, setServerMessage] = useState('');
+  const dispatch = useDispatch<AppDispath>();
+  const { jwt } = useSelector((s: RootState) => s.user);
+  const navigate = useNavigate();
 
-  
+  useEffect(() => { 
+    if (jwt) navigate('/home'); 
+  }, [jwt, navigate]);
+
   const onSubmit = async (dataF: any) => {
-
     const data: RegistrateRequest = {
       name: dataF.name,
       email: dataF.email,
@@ -21,19 +29,20 @@ const Registrate = () => {
     }
     
     try {
-      const response = await axios.post(`${PREFIX}/api/v1/users`, data);
-
-      if (response.status === 200) {
-        setServerMessage('Вхід успішний!');
+      const result = await dispatch(registration(data));
+      
+      if (registration.fulfilled.match(result)) {
+        navigate('/auth/login');
+      } else if (registration.rejected.match(result)) {
+        const errorMessage = result.payload as string || result.error?.message || 'Помилка реєстрації';
+        console.log(result);
+        console.log(errorMessage);
       }
-    } catch (error: any) {
-      if (error.response?.status === 401) {
-        setServerMessage('Невірний логін або пароль.');
-      } else {
-        setServerMessage('Сталася помилка. Спробуйте пізніше.');
-      }
+    } catch (error) {
+      console.error("Registration error:", error);
     }
   };
+
   return (
     <>
       <h1 className={styles.auth_title}>Реєстрація</h1>
@@ -48,7 +57,7 @@ const Registrate = () => {
          placeholder="Пошта" className={styles.auth_input} />
         
         <input 
-        {...register('password', { required: 'Пароль обов’язковий', minLength: { value: 6, message: 'Мінімум 6 символів' } })}
+        {...register('password', { required: 'Пароль обов’язковий', minLength: { value: 16, message: 'Мінімум 16 символів' } })}
          type="password" placeholder="Пароль" className={styles.auth_input} />
         
         <input 
