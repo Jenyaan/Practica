@@ -28,8 +28,7 @@ class AppServiceProvider extends ServiceProvider
             return Password::min(16)->letters()->numbers()->symbols();
         });
         ResetPassword::createUrlUsing(function (User $user, string $token) {
-            //TODO use frontend link
-            return route("auth.password.reset") . "?token=$token";
+            return config("app.frontend", route("auth.password.reset")) . "?token=$token";
         });
     }
 }

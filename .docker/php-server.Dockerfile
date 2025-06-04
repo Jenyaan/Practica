@@ -10,11 +10,10 @@ RUN install-php-extensions pdo_pgsql xdebug pcntl
 ENV DOCUMENT_ROOT=/app/public PHPRC=/app/php.ini
 WORKDIR /app
 RUN a2enmod rewrite headers
-COPY /docker/server.conf /etc/apache2/sites-available/000-default.conf
+COPY /.docker/server.conf /etc/apache2/sites-available/000-default.conf
 COPY --chown=www-data:www-data --chmod=775 . .
-RUN chmod -R 775 ./storage\
-    && chmod -R 775 ./bootstrap/cache
+RUN chmod -R 775 ./storage
 RUN composer install
-COPY --chmod=+x ./docker/docker-entrypoint.sh /usr/local/bin/docker-entrypoint
+COPY --chmod=+x ./.docker/docker-entrypoint.sh /usr/local/bin/docker-entrypoint
 ENTRYPOINT ["docker-entrypoint"]
 CMD ["apache2-foreground"]

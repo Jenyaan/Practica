@@ -18,6 +18,8 @@ return new class extends Migration
             $table->timestamp("email_verified_at")->nullable();
             $table->string("password", 100);
             $table->enum("plan", ["limited", "pro"])->default("limited");
+            $table->bigInteger("files_size_byte")->default(0);
+            $table->uuid("user_path_name");
             // $table->rememberToken();
             $table->timestamps();
         });

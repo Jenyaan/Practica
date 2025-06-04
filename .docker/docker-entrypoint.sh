@@ -1,6 +1,8 @@
 #!/bin/bash
 set -e
 
+rm -f /app/public/storage
+./artisan storage:link --force
 ./artisan migrate:fresh --seed
 ./artisan optimize:clear
 ./artisan config:cache

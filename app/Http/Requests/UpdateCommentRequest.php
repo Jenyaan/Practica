@@ -2,11 +2,9 @@
 
 namespace App\Http\Requests;
 
-use App\Rules\ExistEmailRule;
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Validation\Rules\Password;
 
-class StoreUserRequest extends FormRequest
+class UpdateCommentRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -24,9 +22,8 @@ class StoreUserRequest extends FormRequest
     public function rules(): array
     {
         return [
-            "name" => "required|string|alpha|max:30",
-            "email" => ["required", "email", new ExistEmailRule],
-            "password" => ["required", Password::default()],
+            "text" => "string|max:200",
+            "score" => "numeric|integer|min:1|max10",
         ];
     }
 }

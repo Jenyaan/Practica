@@ -2,11 +2,10 @@
 
 namespace App\Http\Requests;
 
-use App\Rules\ExistEmailRule;
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Validation\Rules\Password;
+use Illuminate\Validation\Rule;
 
-class StoreUserRequest extends FormRequest
+class GETBookRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -24,9 +23,12 @@ class StoreUserRequest extends FormRequest
     public function rules(): array
     {
         return [
-            "name" => "required|string|alpha|max:30",
-            "email" => ["required", "email", new ExistEmailRule],
-            "password" => ["required", Password::default()],
+            "page" => "numeric|integer",
+            "per_page" => "numeric|integer|max:99",
+            "filter_by" => "array",
+            "filter_by.*" => "starts_with:title:,author:,tags:,year:",
+            "sort_by" => [Rule::in(["title", "author", "tags", "year"])],
+            "order_by" => [Rule::in(["desc", "asc"])],
         ];
     }
 }
