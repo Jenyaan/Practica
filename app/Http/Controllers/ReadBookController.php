@@ -26,6 +26,7 @@ class ReadBookController extends Controller implements HasMiddleware
     public function getPage(AuthUtil $authUtil, Parser $pdfParser, Book $book, int $page)
     {
         $user = $book->user;
+        if(!$book->private)
         $authUtil->checkUserAffiliation($user, "Try to read book from another user");
 
         $pdfFile = $user->user_path_name . "/" . $book->base_file_path . "/" . $book->base_file_path . "." . "pdf";
