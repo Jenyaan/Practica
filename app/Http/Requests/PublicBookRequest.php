@@ -24,9 +24,8 @@ class PublicBookRequest extends FormRequest
     {
         return [
             "page" => "numeric|integer",
-            "per_page" => "numeric|integer|max:999",
+            "per_page" => "numeric|integer|max:99",
             "filter_by" => "array",
-            // "filter_by.*"=>[Rule::in(["title", "author", "tags", "year"])],
             "filter_by.*" => "starts_with:title:,author:,tags:,year:",
             "sort_by" => [Rule::in(["title", "author", "tags", "year"])],
             "order_by" => [Rule::in(["desc", "asc"])],
