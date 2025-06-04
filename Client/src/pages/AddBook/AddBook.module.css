@@ -53,16 +53,13 @@ textarea {
   position: relative;
 }
 
-.fileIcon {
-  width: 24px;
-  height: 24px;
-  margin-right: 10px;
-}
-
 .fileName {
   flex-grow: 1;
   font-size: 14px;
+  display: flex;
+  justify-content: center;
 }
+
 .filesContainer {
   display: flex;
   flex-direction: column;
@@ -116,11 +113,6 @@ textarea {
   font-size: 14px;
 }
 
-.fileIcon {
-  width: 20px;
-  margin-right: 8px;
-}
-
 .removeBtn {
   background: transparent;
   border: none;
@@ -146,3 +138,14 @@ textarea {
   font-weight: 500;
   cursor: pointer;
 }
+
+.imagePreview{
+  width: 32px;
+  height: 32px;
+}
+
+.imagePreview > img{
+  width: auto;
+  height: 100%;
+}
+

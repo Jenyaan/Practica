@@ -45,9 +45,9 @@ const Header = () => {
           </div>
           {isMenuOpen && (
             <ul className={styles["dropdown_menu"]}>
-              <li><Link to="/profile" className={styles["dropdown_menu_link"]}>Профіль</Link></li>
-              <li><Link to="/create-book" className={styles["dropdown_menu_link"]}>Додати книгу</Link></li>
-              <li><Link to="#" className={styles["dropdown_menu_link"]} onClick={handleLogout}>Вийти</Link></li>
+              <Link to="/profile" className={styles["dropdown_menu_link"]}><li>Профіль</li></Link>
+              <Link to="/create-book" className={styles["dropdown_menu_link"]}><li>Додати книгу</li></Link>
+              <Link to="#" className={styles["dropdown_menu_link"]} onClick={handleLogout}><li>Вийти</li></Link>
             </ul>
           )}
         </div>

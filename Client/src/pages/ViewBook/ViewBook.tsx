@@ -1,67 +1,92 @@
-import Footer from '../../components/simple/Footer/Footer'
-import Header from '../../components/simple/Header/Header'
-import styles from './ViewBook.module.css'
-import LinkBack from '../../components/ui/LinkBack/LinkBack'
-import { Link } from 'react-router-dom'
-import { useState } from 'react'
+import Footer from '../../components/simple/Footer/Footer';
+import Header from '../../components/simple/Header/Header';
+import styles from './ViewBook.module.css';
+import LinkBack from '../../components/ui/LinkBack/LinkBack';
+import { Link, useNavigate, useParams } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { useSelector } from 'react-redux';
+import axios from 'axios';
+import { PREFIX } from '../../api/API';
+import type { RootState } from '../../store/store';
+
+export interface PropsViewBook{
+  text: string;
+  total_pages: number;
+}
+
 
 const ViewBook = () => {
-  const [page, setPage] = useState(200); 
-  
+  const { bookId, pageId } = useParams(); // зчитуємо з URL
+  const navigate = useNavigate();
+  const jwt = useSelector((state: RootState) => state.user.jwt);
+
+  const [contentPage, setContentPage] = useState<PropsViewBook>();
+  const [page, setPage] = useState(Number(pageId) || 1);
+
+  useEffect(() => {
+    const fetchPageText = async () => {
+      try {
+        const res = await axios.get(`${PREFIX}/api/v1/books/${bookId}/read/${page}`, {
+          headers: {
+            Authorization: `Bearer ${jwt}`
+          }
+        });
+        setContentPage(res.data);
+      } catch (err) {
+        console.error('Помилка завантаження сторінки:', err);
+      }
+    };
+
+    if (jwt && bookId && page) {
+      fetchPageText();
+    }
+  }, [jwt, bookId, page]);
+
+  const handlePageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newPage = Number(e.target.value);
+    if (newPage >= 1 && newPage <= 456) {
+      setPage(newPage);
+      navigate(`/book/${bookId}/${newPage}`);
+    }
+  };
+
+  useEffect(() => {
+    if (pageId && Number(pageId) !== page) {
+      setPage(Number(pageId));
+    }
+  }, [pageId]);
+
   return (
     <div className={styles['container']}>
-      <Header/>
+      <Header />
       <div className={styles['main']}>
         <LinkBack>Назад</LinkBack>
         <div className={styles['head-read']}>
-            <p>48 Законів власті</p>
-            <p className={styles['bookmark-list']}>Перейти до закладки:
-              <Link to = '/book/1' className={styles['bookmark-item']}>21 ст.</Link> 
-              <Link to = '/book/1' className={styles['bookmark-item']}>41 ст.</Link> 
-              <Link to = '/book/1' className={styles['bookmark-item']}>81 ст.</Link>
-            </p>
+          <p>48 Законів власті</p>
+          <p className={styles['bookmark-list']}>Перейти до закладки:
+            <Link to={`/book/${bookId}/21`} className={styles['bookmark-item']}>21 ст.</Link>
+            <Link to={`/book/${bookId}/41`} className={styles['bookmark-item']}>41 ст.</Link>
+            <Link to={`/book/${bookId}/81`} className={styles['bookmark-item']}>81 ст.</Link>
+          </p>
         </div>
         <div className={styles['text-book']}>
           <div className={styles['bookmark']}><img src="/icons/save.svg" alt="" /></div>
-          <p>
-            {`Зыков Виталий
-          6-Великие Спящие (черновик)
-          Виталий Зыков
-          ВЕЛИКИЕ СПЯЩИЕ
-          В двух томах
-          Том 1. Тьма против Тьмы
-          (Цикл "Дорога домой" - 6)
-
-          ...Вопрос веры тысячелетиями беспокоит теологов, магов-практиков и Мастеров боевых искусств. Невежда скажет, что здесь нет ничего непонятного. Мол, вера есть совокупность наших убеждений и чаяний, то, что составляет основу нашего мировоззрения и мироощущения. И не важно, во что мы верим - в богов или в их отсутствие - мы все верующие. Тот, кто утверждает обратное, просто недостаточно хорош как мыслитель... Но на то он и невежда, чтобы не углубляться в суть, да? Потому как есть вера и Вера. И пока мы вкладываем в это слово один лишь образ, мираж, фантазию, то образом оно и останется. Даже если готовы за него умереть. Мало ли пустых и не очень идей, за которые отдают жизнь люди и нелюди?.. Но если образ подкреплён энергией, силой сердец, настоящей магией душ, когда в него вкладывается сама наша суть, то фикция превращается в нечто иное, могучее, несокрушимое. И вера становится Верой! Верой, которая способно подвинуть гору, покорить дракона или осушить море...
-
-          Размышления о корнях могущества великого Нунь Туа, Мастера школы Великого Предела, на званом обеде у Императора империи Хань
-
-          Что такое дурное пророчество, кроме как вера разумных в неизбежный конец?
-          Девиз одного из старых залимарских родов
-
-          ПРОЛОГ
-
-          Некогда великий Фф'али'ер — обитель высокородных, отчий дом воителей и чародеев, гроза кочевников и жемчужина севера Сууда — а ныне даром никому не нужное селение Фалир, ставшее приютом для потомков тех самых странников пустыни, против которых некогда и был построен, хирел день ото дня. Его всё реже и реже посещали торговые караваны, потихоньку уходили обладатели Дара, а среди членов Совета нет-нет и начинались разговоры о переселении состоятельных жителей в более благополучные места. Да что там говорить, если даже бандитские ватаги начали избегать Фалира, считая, что в этом месте им не светит ни золото, ни нажива, ни даже мнимая власть. Дома пустели, дороги зарастали, кладовые пустели, а на главной площади всё чаще раздавались крики нищих.
-
-          Небо над Фалиром казалось всегда чуть более тусклым, чем над остальными землями, и даже солнце, казалось, спешило спрятаться за горизонтом. Старики шептали, что это — проклятие. Молодёжь, если ещё оставалась в деревне, смеялась, но лишь до первой встречи с тенями, что крались по ночам между пустыми постройками. Ходили слухи, что в древнем подвале разрушенного дома старейшины пробудилось нечто, что когда-то запечатали сами основатели города, и теперь оно ищет выход. Всё больше людей пропадало без следа. И всё чаще слышался один и тот же вопрос: не пора ли оставить это место окончательно?
-
-          Но именно сюда однажды ступил человек, чьё имя позже узнает весь мир — ученик великого Пути, носитель Веры и тот, кто бросил вызов самой Тьме...`}
-          </p>
+          <p>{contentPage?.text}</p>
         </div>
         <div className={styles["page-control"]}>
           <input
             type="number"
             min={1}
-            max={456}
+            max={contentPage?.total_pages}
             value={page}
-            onChange={(e) => setPage(Number(e.target.value))} 
+            onChange={handlePageChange}
           />
-          <span>/ 456</span>
+          <span>/ {contentPage?.total_pages}</span>
         </div>
       </div>
-      <Footer/>
+      <Footer />
     </div>
-  )
-}
+  );
+};
 
-export default ViewBook
+export default ViewBook;

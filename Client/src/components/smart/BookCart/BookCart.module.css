@@ -2,15 +2,21 @@
     width: 220px;
 }
 
-.cart_book > div{
-    height: 330px;
-    width: 100%;
+.cart_book > div {
+  height: 330px;
+  width: 220px;
+  overflow: hidden; /* чтобы спрятать выходящие части */
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
-.cart_book > div > img{
-    height: 100%;
-    width: auto;
+.cart_book > div > img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain; /* или cover, если надо заполнить */
 }
+
 
 .cart_book > p {
   padding-left: 15px;

@@ -1,8 +1,12 @@
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import type { DragEvent, ChangeEvent, FormEvent } from 'react';
 import Footer from '../../components/simple/Footer/Footer';
 import Header from '../../components/simple/Header/Header';
 import styles from './AddBook.module.css';
+import { PREFIX } from '../../api/API';
+import axios from 'axios';
+import { useSelector } from 'react-redux';
+import type { RootState } from '../../store/store';
 
 interface BookData {
   title: string;
@@ -17,9 +21,10 @@ interface BookData {
 
 
 const AddBook = () => {
+    const jwt = useSelector((state: RootState) => state.user.jwt);
     const fileInputRef = useRef<HTMLInputElement>(null);
-
-
+    const [dragActive, setDragActive] = useState(false);
+    const [isIdUser, setisIdUser] = useState<number | null>(null);
     const [bookData, setBookData] = useState<BookData>({
         title: '',
         author: '',
@@ -30,10 +35,29 @@ const AddBook = () => {
         coverImage: null,
         bookFiles: []
     });
-
-
-  const [dragActive, setDragActive] = useState(false);
   
+  useEffect(() => {
+    const fetchUserData = async (token: string) => {
+      try {
+        const response = await axios.get(`${PREFIX}/api/v1/auth/me`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        setisIdUser(response.data.id)
+
+      } catch (error) {
+        console.error('Error fetching user data:', error);
+      }
+    };
+
+    if (jwt) {
+      fetchUserData(jwt);
+    } else {
+      console.log('JWT token is missing');
+    }
+  }, [jwt]);
+
 
   const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -98,10 +122,52 @@ const removeFile = (index: number) => {
 };
 
 
-  const handleSubmit = (e: FormEvent) => {
-    e.preventDefault();
-    console.log('Данные книги:', bookData);
-    alert('Книга успешно добавлена!');
+const handleSubmit = async (e: FormEvent) => {
+  e.preventDefault();
+
+  const formData = new FormData();
+
+  formData.append('title', bookData.title);
+  formData.append('author', bookData.author);
+
+  if (bookData.coverImage) {
+    formData.append('image', bookData.coverImage);
+  }
+
+  formData.append('genres[0]', '1');
+
+
+  if (bookData.description) {
+    formData.append('description', bookData.description);
+  }
+
+  if (bookData.tags) {
+    formData.append('tags', bookData.tags);
+  }
+
+  if (bookData.access !== 'Доступ') {
+    formData.append('public', bookData.access === 'Публічний' ? '1' : '0');
+  }
+
+  bookData.bookFiles.forEach((file, index) => {
+    formData.append(`files[${index}]`, file);
+  });
+
+  try {
+    const response = await axios.post(
+      `${PREFIX}/api/v1/users/${isIdUser}/books`,
+      formData,
+      {
+        headers: {
+          Authorization: `Bearer ${jwt}`,
+          'Content-Type': 'multipart/form-data',
+        },
+      }
+    );
+
+    console.log(response);
+
+    alert('Книга успішно додана!');
     setBookData({
       title: '',
       author: '',
@@ -110,9 +176,19 @@ const removeFile = (index: number) => {
       tags: '',
       access: 'Доступ',
       coverImage: null,
-      bookFiles: []
+      bookFiles: [],
     });
-  };
+  } catch (error: any) {
+    if (error.response) {
+      console.error('Помилка:', error.response.data);
+      alert('Помилка додавання книги');
+    } else {
+      console.error('Помилка під час надсилання форми:', error);
+      alert('Непередбачена помилка');
+    }
+  }
+};
+
 
   return (
     <div>
@@ -146,11 +222,12 @@ const removeFile = (index: number) => {
             <div className={styles.fileDrop}>
             {bookData.coverImage ? (
                 <div className={styles.fileItem}>
-                <img
+                <div className={styles.imagePreview}>
+                  <img
                     src="/icons/file.svg"
                     alt="Обкладинка"
-                    className={styles.imagePreview}
-                />
+                  />
+                </div>
                 <span className={styles.fileName}>{bookData.coverImage.name}</span>
                 <button
                     type="button"
@@ -187,7 +264,12 @@ const removeFile = (index: number) => {
             >
             {bookData.bookFiles.map((file, index) => (
                 <div key={index} className={styles.fileItem}>
-                <img src="/icons/file.svg" alt="file" className={styles.fileIcon} />
+                <div className={styles.imagePreview}>
+                  <img
+                    src="/icons/file.svg"
+                    alt="Файл"
+                  />
+                </div>
                 <span>{file.name}</span>
                 <button
                     type="button"

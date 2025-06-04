@@ -1,14 +1,60 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import styles from './ModalComment.module.css';
+import axios from 'axios';
+import { PREFIX } from '../../../api/API';
+import { useSelector } from 'react-redux';
+import type { RootState } from '../../../store/store';
 
 type Props = {
   onClose: () => void;
-  onSubmit: (comment: string, rating: number) => void;
+  bookId: string;
 };
 
-const ModalComment: React.FC<Props> = ({ onClose, onSubmit }) => {
+const ModalComment: React.FC<Props> = ({ onClose, bookId}) => {
   const [comment, setComment] = useState('');
   const [rating, setRating] = useState(4);
+  const [idUser, setIdUser] = useState('');
+  const jwt = useSelector((state: RootState) => state.user.jwt);
+  
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const res = await axios.get(`${PREFIX}/api/v1/auth/me`, {
+          
+          headers: {
+            Authorization: `Bearer ${jwt}`,
+          },
+        });
+        setIdUser(res.data.id);
+      } catch (error) {
+        console.error('Помилка отримання користувача:', error);
+      }
+    };
+
+    if (jwt) {
+      fetchUser();
+    }
+  }, [jwt]);
+
+  const handleSubmit = async () => {
+    try {
+      await axios.post(
+        `${PREFIX}/api/v1/users/${idUser}/books/${bookId}/comments`,
+        {
+          text: comment,
+          score: rating,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${jwt}`,
+          },
+        }
+      );
+      onClose(); // закрити модалку після успішної відповіді
+    } catch (error) {
+      console.error('Помилка при додаванні коментаря:', error);
+    }
+  };
 
   return (
     <div className={styles.overlay} onClick={onClose}>
@@ -35,7 +81,7 @@ const ModalComment: React.FC<Props> = ({ onClose, onSubmit }) => {
             </span>
           ))}
         </div>
-        <button className={styles.addButton} onClick={() => onSubmit(comment, rating)}>
+        <button className={styles.addButton} onClick={handleSubmit}>
           Додати
         </button>
       </div>

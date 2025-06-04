@@ -52,7 +52,7 @@ const router = createBrowserRouter([
     ]
   },
   {
-    path: '/book',
+    path: '/book/:bookId',
     element: <Book/>
   },
   {
@@ -60,7 +60,7 @@ const router = createBrowserRouter([
     element: <AddBook/>
   },
   {
-    path: 'book/1',
+    path: 'book/:bookId/:pageId',
     element: <ViewBook/>
   },		
   {

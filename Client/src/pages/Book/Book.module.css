@@ -27,7 +27,21 @@
     flex-direction: column;
 }
 
+.description_book_raiting{
+    display: flex;
+    justify-content: space-between;
+}
+
 .description_book > p{
+    margin: 20px;
+    align-self: stretch;
+    font-size: 21px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
+}
+
+.description_book_raiting > p{
     margin: 20px;
     align-self: stretch;
     font-size: 21px;
@@ -40,15 +54,19 @@
     margin-bottom: 15px;
 }
 
-.description_about_book > p{
-    padding-left: 15px;
-    margin: 5px;
-    align-self: stretch;
-    font-size: 21px;
-    font-style: normal;
-    font-weight: 400;
-    line-height: 1.7;
+.description_about_book > p {
+  padding-left: 15px;
+  margin: 5px;
+  align-self: stretch;
+  font-size: 21px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 1.7;
+  white-space: normal;        /* разрешить перенос */
+  word-wrap: break-word;      /* перенос длинных слов */
+  overflow-wrap: break-word;  /* поддержка в разных браузерах */
 }
+
 
 .teg_book{    
     padding-top: 20px;
@@ -148,8 +166,11 @@
 }
 
 .button_book_orange{
-    width: 100%;
-    padding: 15px;
+    display: flex;
+    justify-content: center;
+    text-decoration: none;
+    width: 96%;
+    padding: 10px;
     background: #FFAB4B;
     color: rgb(0, 0, 0);
     font-size: 18px;

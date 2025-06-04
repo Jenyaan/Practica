@@ -81,6 +81,10 @@
   display: block;
 }
 
+.update_button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
 
 .card h2 {
   text-align: center;
