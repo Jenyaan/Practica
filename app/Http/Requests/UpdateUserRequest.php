@@ -26,7 +26,6 @@ class UpdateUserRequest extends FormRequest
         return [
             "name" => "string|alpha|max:30",
             "email" => ["email", new ExistEmailRule],
-            "password" => Password::default(),
         ];
     }
 }

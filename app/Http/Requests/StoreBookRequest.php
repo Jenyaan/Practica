@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Models\Format;
 use App\Rules\ExistGenreRule;
 use App\Rules\UniqueFileFormatRule;
 use Illuminate\Foundation\Http\FormRequest;
@@ -24,6 +25,7 @@ class StoreBookRequest extends FormRequest
      */
     public function rules(): array
     {
+        $formats = Format::all()->map(fn($format)=>$format->name)->toArray();
         return [
             "title" => "required|string|min:10|max:50",
             "image" => File::image()->max("5mb"),
@@ -34,7 +36,7 @@ class StoreBookRequest extends FormRequest
             "genres" => "required|array|min:1",
             "genres.*" => ["numeric", "integer", new ExistGenreRule],
             "files" => ["required", "array", "min:1", "max:10", new UniqueFileFormatRule],
-            "files.*" => File::types(["pdf", "doc", "docx", "txt", "epub", "rtf", "odt", "djvu", "djv", "fb2"])->max("500mb"),
+            "files.*" => File::types($formats)->max("500mb"),
             "public" => "boolean",
         ];
     }

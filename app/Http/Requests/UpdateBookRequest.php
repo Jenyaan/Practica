@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Models\Format;
 use App\Rules\ExistGenreRule;
 use App\Rules\UniqueFileFormatRule;
 use Illuminate\Foundation\Http\FormRequest;
@@ -24,6 +25,7 @@ class UpdateBookRequest extends FormRequest
      */
     public function rules(): array
     {
+        $formats = Format::all()->map(fn($format)=>$format->name)->toArray();
         return [
             "title" => "string|min:10|max:50",
             "image" => File::image()->max("5mb"),
@@ -36,7 +38,7 @@ class UpdateBookRequest extends FormRequest
             "formats" => "array",
             "formats.*" => "nullable|exists:formats,name",
             "files" => ["array", "min:1", "max:10", new UniqueFileFormatRule],
-            "files.*" => File::types(["pdf", "doc", "docx", "txt", "epub", "rtf", "odt", "djvu", "djv", "fb2"])->max("500mb"),
+            "files.*" => File::types($formats)->max("500mb"),
             "public" => "boolean",
         ];
     }
