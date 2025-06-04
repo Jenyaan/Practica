@@ -7,14 +7,26 @@ use App\Models\Book;
 use App\Models\Bookmark;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Controllers\HasMiddleware;
+use Illuminate\Routing\Controllers\Middleware;
 
-class BookmarkController extends Controller
+class BookmarkController extends Controller implements HasMiddleware
 {
     private $bookmarkService;
 
     public function __construct(BookmarkService $bookmarkService)
     {
         $this->bookmarkService = $bookmarkService;
+    }
+
+        /**
+     * Get the middleware that should be assigned to the controller.
+     */
+    public static function middleware(): array
+    {
+        return [
+            new Middleware("auth"),
+        ];
     }
 
     /**

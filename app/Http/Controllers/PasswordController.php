@@ -15,10 +15,6 @@ class PasswordController extends Controller
         $this->passwordService = $passwordService;
     }
 
-    /* TODO
-    * Сделать свой Notification для отправки писем, и отправлять чистый токен
-    * либо переделать ссылку под фронтенд
-    */
     public function forgotPassword(Request $request)
     {
         $validated = $request->validate(["email" => "required|email"]);

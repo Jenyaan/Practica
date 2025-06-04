@@ -1,6 +1,7 @@
 #!/bin/bash
 set -e
 
+./artisan storage:link --force
 ./artisan migrate:fresh --seed
 ./artisan optimize:clear
 ./artisan config:cache

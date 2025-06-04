@@ -46,9 +46,6 @@ class BookService
             $orderBy = array_key_exists("order_by", $query) ? $query["order_by"] : "asc";
             $books = $books->orderBy($query["sort_by"], $orderBy);
         }
-        // if(!$books->exists()){
-        //     throw new NotFoundHttpException("Books with fileters = " . serialize($query["filter_by"]) . " not found");
-        // }
 
         $perPage = array_key_exists("per_page", $query) ? $query["per_page"] : 15;
         return $books->paginate($perPage);
@@ -85,6 +82,14 @@ class BookService
         $user->files_size_byte += $this->uploadFilesSizeByte($data["files"]);
         $user->save();
 
+        return $book;
+    }
+
+    public function showBook(Book $book): Book{
+        if(!$book->public){
+            $this->authUtil->checkUserAffiliation($book->user, "Try to get not public book");
+        }
+        
         return $book;
     }
 

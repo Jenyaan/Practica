@@ -26,7 +26,7 @@ class BookController extends Controller implements HasMiddleware
     public static function middleware(): array
     {
         return [
-            new Middleware("auth", except: ["public"]),
+            new Middleware("auth", except: ["public", "show"]),
         ];
     }
 
@@ -62,7 +62,7 @@ class BookController extends Controller implements HasMiddleware
      */
     public function show(Book $book)
     {
-        return $book->toResource();
+        return $this->bookService->showBook($book)->toResource();
     }
 
     /**
