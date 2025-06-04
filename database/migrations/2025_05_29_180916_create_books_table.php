@@ -16,7 +16,7 @@ return new class extends Migration
             $table->string("title", 50);
             $table->string("image_url", 100)->nullable();
             $table->string("author", 50);
-            $table->unsignedSmallInteger("year")->nullable();
+            $table->integer("year")->nullable();
             $table->string("description", 500)->nullable();
             $table->string("tags", 100)->nullable();
             $table->boolean("public")->default(true);
@@ -50,7 +50,7 @@ return new class extends Migration
         Schema::create("bookmarks", function (Blueprint $table) {
             $table->id();
             $table->string("name", 20)->nullable();
-            $table->unsignedSmallInteger("page");
+            $table->smallInteger("page");
             $table->timestamp("created_at");
             $table->foreignId("book_id")->constrained()->cascadeOnDelete()->cascadeOnUpdate();
         });
