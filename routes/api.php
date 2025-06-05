@@ -41,4 +41,4 @@ Route::get("v1/users/{user}/comments", [CommentController::class, "userComments"
 Route::apiResource("v1/users", UserController::class);
 Route::apiResource("v1/users.books", BookController::class)->shallow()->scoped();
 Route::apiResource("v1/users.books.bookmarks", BookmarkController::class)->except("update")->shallow()->scoped();
-Route::apiResource("v1/users.books.comments", CommentController::class)->shallow()->scoped();
+Route::apiResource("v1/users.books.comments", CommentController::class)->shallow();
