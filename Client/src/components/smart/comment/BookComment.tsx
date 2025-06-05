@@ -3,11 +3,10 @@ import styles from './Commnet.module.css';
 
 export interface PropsCommentData {
   id: number;
-  username: string;
+  user_name: string;
   score: number;
-  likes: number;
-  dislikes: number;
-  text: string;
+  created_at: string;
+  text:string
 }
 
 interface BookCommentProps {
@@ -24,8 +23,8 @@ const BookComment: React.FC<BookCommentProps> = ({ data }) => {
         </div>
 
         <div className={styles['user-comment']}>
-          <p className={styles.username}>{data.username}</p>
-          {/* <p className={styles.date}>{data.date}</p> */}
+          <p className={styles.username}>{data.user_name}</p>
+          <p className={styles.date}>{data.created_at}</p>
         </div>
 
         <div className={styles['rating-comment']}>

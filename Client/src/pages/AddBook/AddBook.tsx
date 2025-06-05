@@ -32,8 +32,6 @@ const AddBook = () => {
   const {
     register,
     handleSubmit,
-    setValue,
-    watch,
     formState: { errors }
   } = useForm<FormValues>();
 
@@ -205,8 +203,6 @@ const onInvalid = (errors: any) => {
             placeholder="Назва книги"
             className={errors.title ? styles.inputError : ''}
           />
-          {errors.title && <p className={styles.error}>{errors.title.message}</p>}
-
           <input
             {...register("author", {
               required: "Автор обов’язковий",
@@ -215,7 +211,6 @@ const onInvalid = (errors: any) => {
             placeholder="Автор"
             className={errors.author ? styles.inputError : ''}
           />
-          {errors.author && <p className={styles.error}>{errors.author.message}</p>}
 
           <select {...register("genre", { required: "Жанр обов’язковий" })}>
             <option disabled value="">Жанр</option>
@@ -223,7 +218,6 @@ const onInvalid = (errors: any) => {
             <option value="Драма">Драма</option>
             <option value="Роман">Роман</option>
           </select>
-          {errors.genre && <p className={styles.error}>{errors.genre.message}</p>}
 
           <div className={styles.fileDrop}>
             {coverImage ? (
@@ -296,20 +290,17 @@ const onInvalid = (errors: any) => {
             placeholder="Опис"
             rows={5}
           />
-          {errors.description && <p className={styles.error}>{errors.description.message}</p>}
 
           <input
             {...register("tags", { maxLength: { value: 100, message: "Максимум 100 символів" } })}
             placeholder="Теги (розділяйте пробілом)"
           />
-          {errors.tags && <p className={styles.error}>{errors.tags.message}</p>}
 
           <select {...register("access", { required: "Виберіть доступ" })}>
             <option disabled value="">Доступ</option>
             <option value="Публічний">Публічний</option>
             <option value="Приватний">Приватний</option>
           </select>
-          {errors.access && <p className={styles.error}>{errors.access.message}</p>}
 
           <button type="submit" className={styles.submit}>Додати</button>
         </form>

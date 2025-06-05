@@ -1,14 +1,14 @@
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import Footer from '../../components/simple/Footer/Footer'
 import Header from '../../components/simple/Header/Header'
 import styles from "./Book.module.css"
 import { Link, useParams } from 'react-router-dom'
-import Comments from '../../components/smart/comment/Comments'
 import LinkBack from '../../components/ui/LinkBack/LinkBack'
 import ModalDownload from '../../components/ui/ModalDownload/ModalDownload'
 import ModalComment from '../../components/ui/ModalComment/ModalComment'
 import axios from 'axios'
 import { PREFIX } from '../../api/API'
+import CommentData, { type PropsCommentData } from '../../components/smart/comment/BookComment'  // Добавь импорт компонента для комментов
 
 export interface Book {
   author: string;
@@ -22,43 +22,43 @@ export interface Book {
   tags: string;
   title: string;
   user_id: number;
-  year?: number | null;  // добавил, чтобы соответствовать твоему описанию
+  year?: number | null;
 }
 
 const Book = () => {
   const [showComments, setShowComments] = useState(false);
-  const [showDownLoadModal, setShowDownLoadModal] = useState<boolean>(false);
-  const [showCommentdModal, setShowCommentdModal] = useState<boolean>(false);
-
-  // Типизация состояния book с интерфейсом Book | null (до загрузки данных)
+  const [showDownLoadModal, setShowDownLoadModal] = useState(false);
+  const [showCommentdModal, setShowCommentdModal] = useState(false);
   const [book, setBook] = useState<Book | null>(null);
-  const { bookId } = useParams<{ bookId: string }>();  // типизация useParams
+  const { bookId } = useParams<{ bookId: string }>();
+
+  const [comments, setComments] = useState<PropsCommentData[]>([]);
+  const [commentsLoading, setCommentsLoading] = useState(false);
 
   useEffect(() => {
     if (!bookId) return;
     axios.get<Book>(`${PREFIX}/api/v1/books/${bookId}`)
-      .then((response) => {
-        console.log(response);
-        setBook(response.data);
-      })
-      .catch((error) => {
-        console.error('Помилка при завантаженні книги:', error);
-      });
+      .then(response => setBook(response.data))
+      .catch(error => console.error('Помилка при завантаженні книги:', error));
   }, [bookId]);
 
-  const handleDownload = (format: string) => {
-    console.log(`Формат обрано: ${format}`);
-    setShowDownLoadModal(false);
-  };
+  useEffect(() => {
+    if (!bookId) return;
 
-  const handleComment = (text: string, stars: number) => {
-    console.log('Коментар:', text, 'Оцінка:', stars);
-    setShowCommentdModal(false);
-  };
+    setCommentsLoading(true);
+    axios.get<{ data: PropsCommentData[] }>(`${PREFIX}/api/v1/books/${bookId}/comments`)
+      .then(response => setComments(response.data.data))
+      .catch(error => console.error('Помилка при завантаженні коментарів:', error))
+      .finally(() => setCommentsLoading(false));
+  }, [bookId]);
 
-  const toggleComments = () => {
-    setShowComments(prev => !prev);
-  };
+  const toggleComments = () => setShowComments(prev => !prev);
+
+  const averageRating = comments.length
+    ? (comments.reduce((sum, c) => sum + c.score, 0) / comments.length).toFixed(1)
+    : '0.0';
+
+
 
   if (!book) return <div>Завантаження...</div>;
 
@@ -72,17 +72,16 @@ const Book = () => {
           <div className={styles.info_book}>
             <div className={styles.header_book}>
               <h1>{book.title}</h1>
-              <div className={styles.favorites_book}>
-                {/* Иконка можно оставить */}
-              </div>
+              <div className={styles.favorites_book}></div>
             </div>
 
             <div className={styles.description_book}>
-              <div className={styles.description_book_raiting}>
-                <p>Жанр: <span style={{ textDecoration: "underline" }}>{book.genres.join(", ")}</span></p>
-                {/* Оценка можно вывести, если есть */}
-                <p>Оцінка: 4.7 / 5</p>
-              </div>
+            <div className={styles.description_book_raiting}>
+              <p>Жанр: <span style={{ textDecoration: "underline" }}>{book.genres.join(", ")}</span></p>
+              {comments.length > 0 && (
+                <p>Оцінка: {averageRating} / 5</p>
+              )}
+            </div>
               <p>Автор: {book.author}</p>
 
               <div className={styles.description_about_book}>
@@ -92,13 +91,12 @@ const Book = () => {
 
               <div className={styles.teg_book}>
                 <p>Теги: </p>
-                {/* Можно разбить строку тегов на отдельные, если нужно */}
                 <a href="">{book.tags}</a>
               </div>
 
               <div className={styles.comments_container}>
                 <div className={styles.view_comments} onClick={toggleComments}>
-                  <p>Коментарі (2)</p>
+                  <p>Коментарі ({comments.length})</p>
                   <div>
                     <img
                       src="/icons/dropmenu.svg"
@@ -107,13 +105,9 @@ const Book = () => {
                     />
                   </div>
                 </div>
-                <a href="" onClick={(e) => {
+                <a href="" onClick={e => {
                   e.preventDefault();
-                  if (book.id) {
-                    setShowCommentdModal(true);
-                  } else {
-                    console.error('bookId не визначено');
-                  }
+                  setShowCommentdModal(true);
                 }}>
                   + Додати коментар
                 </a>
@@ -125,7 +119,16 @@ const Book = () => {
                   />
                 )}
               </div>
-              {showComments && <Comments bookId={book.id} />}
+
+              {showComments && (
+                <div>
+                  {commentsLoading && <p>Завантаження коментарів...</p>}
+                  {!commentsLoading && comments.length === 0 && <p>Коментарі відсутні.</p>}
+                  {!commentsLoading && comments.length > 0 && comments.map(comment => (
+                    <CommentData key={comment.id} data={comment} />
+                  ))}
+                </div>
+              )}
             </div>
           </div>
 
@@ -140,10 +143,9 @@ const Book = () => {
                 <ModalDownload
                   onClose={() => setShowDownLoadModal(false)}
                   bookId={book.id.toString()}
-                  format={book.formats[0]} // або той формат, який треба
+                  format={book.formats[0]}
                 />
               )}
-
             </div>
           </div>
         </div>

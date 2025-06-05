@@ -1,4 +1,3 @@
-import React from 'react'
 import styles from './BookCart.module.css'
 import { PREFIX } from '../../../api/API';
 
