@@ -1,12 +1,15 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import styles from "../Header/Header.module.css";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import type { RootState } from "../../../store/store";
 import { userActions } from "../../../store/auth.slice";
+import axios from "axios";
+import { PREFIX } from "../../../api/API";
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isName, setIsName] = useState(false);
   const toggleMenu = () => setIsMenuOpen((prev) => !prev);
   
   const { jwt } = useSelector((state: RootState) => state.user);
@@ -17,6 +20,27 @@ const Header = () => {
     dispatch(userActions.logout());
     navigate('/auth/login');
   };
+
+  useEffect(() => {
+    const fetchUserData = async (token: string) => {
+      try {
+        const response = await axios.get(`${PREFIX}/api/v1/auth/me`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        setIsName(response.data.name);
+      } catch (error) {
+        console.error('Error fetching user data:', error);
+      }
+    };
+
+    if (jwt) {
+      fetchUserData(jwt);
+    } else {
+      console.log('JWT token is missing');
+    }
+  }, [jwt]);
 
 
   return (
@@ -36,7 +60,7 @@ const Header = () => {
           <div className={styles["header_avatar"]}>
             <img src="/icons/avatar.svg" alt="" />
           </div>
-          <p>Jekan34</p>
+          <p>{isName}</p>
           <div
             className={`${styles["header_dropmenu"]} ${isMenuOpen ? styles["rotated"] : ""}`}
             onClick={toggleMenu}

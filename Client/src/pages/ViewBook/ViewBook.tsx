@@ -14,11 +14,13 @@ export interface PropsViewBook{
   total_pages: number;
 }
 
-
 const ViewBook = () => {
-  const { bookId, pageId } = useParams(); // зчитуємо з URL
+  const { bookId, pageId } = useParams()
   const navigate = useNavigate();
   const jwt = useSelector((state: RootState) => state.user.jwt);
+
+  const [bookmarks, setBookmarks] = useState<number[]>([]);
+  const [isBookmarked, setIsBookmarked] = useState(false);
 
   const [contentPage, setContentPage] = useState<PropsViewBook>();
   const [page, setPage] = useState(Number(pageId) || 1);
@@ -42,6 +44,28 @@ const ViewBook = () => {
     }
   }, [jwt, bookId, page]);
 
+  useEffect(() => {
+    const stored = localStorage.getItem(`bookmark_${bookId}`);
+    const parsed: number[] = stored ? JSON.parse(stored) : [];
+    setBookmarks(parsed);
+    setIsBookmarked(parsed.includes(page));
+  }, [bookId, page]);
+
+  const handleBookmark = () => {
+    let updatedBookmarks = [...bookmarks];
+
+    if (isBookmarked) {
+      updatedBookmarks = updatedBookmarks.filter(p => p !== page);
+    } else {
+      updatedBookmarks.push(page);
+    }
+
+    setBookmarks(updatedBookmarks);
+    setIsBookmarked(!isBookmarked);
+    localStorage.setItem(`bookmark_${bookId}`, JSON.stringify(updatedBookmarks));
+  };
+
+
   const handlePageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newPage = Number(e.target.value);
     if (newPage >= 1 && newPage <= 456) {
@@ -63,14 +87,24 @@ const ViewBook = () => {
         <LinkBack>Назад</LinkBack>
         <div className={styles['head-read']}>
           <p>48 Законів власті</p>
-          <p className={styles['bookmark-list']}>Перейти до закладки:
-            <Link to={`/book/${bookId}/21`} className={styles['bookmark-item']}>21 ст.</Link>
-            <Link to={`/book/${bookId}/41`} className={styles['bookmark-item']}>41 ст.</Link>
-            <Link to={`/book/${bookId}/81`} className={styles['bookmark-item']}>81 ст.</Link>
-          </p>
+          {bookmarks.length > 0 && (
+            <p className={styles['bookmark-list']}>Перейти до закладки:
+              {bookmarks.map((p) => (
+                <Link key={p} to={`/book/${bookId}/${p}`} className={styles['bookmark-item']}>
+                  {p} ст.
+                </Link>
+              ))}
+            </p>
+          )}
         </div>
         <div className={styles['text-book']}>
-          <div className={styles['bookmark']}><img src="/icons/save.svg" alt="" /></div>
+        <div
+          className={styles['bookmark']}
+          onClick={handleBookmark}
+          title={isBookmarked ? 'Видалити із закладок' : 'Додати в закладки'}
+        >
+          <img src={isBookmarked ? '/icons/save-active.svg' : '/icons/save.svg'} alt="Закладка" />
+        </div>
           <p>{contentPage?.text}</p>
         </div>
         <div className={styles["page-control"]}>

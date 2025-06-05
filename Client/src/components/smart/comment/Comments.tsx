@@ -1,43 +1,43 @@
-import React from 'react';
-import styles from './Commnet.module.css';
+// Comments.tsx
+import React, { useEffect, useState } from 'react';
+import axios from 'axios';
+import { PREFIX } from '../../../api/API';
+import CommentData, { type PropsCommentData } from './BookComment';
 
-const Comment = () => {
-  return (
-    <div className={styles['container-comment']}>
-      <div className={styles['info-comment']}>
-        <div className={styles['avatar-comment']}>
-          <img src="/icons/avatar.svg" alt="Avatar" />
-        </div>
 
-        <div className={styles['user-comment']}>
-          <p className={styles.username}>Jekan34</p>
-          <p className={styles.date}>21.05.2025</p>
-        </div>
+interface CommentsProps {
+  bookId: number;
+}
 
-        <div className={styles['rating-comment']}>
-          {[1, 2, 3, 4].map((_, i) => (
-            <img key={i} src="/icons/star-fill.png" alt="Star" />
-          ))}
-          <img src="/icons/star-outline.png" alt="Star" />
-        </div>
+const Comments: React.FC<CommentsProps> = ({ bookId }) => {
+  const [comments, setComments] = useState<PropsCommentData[]>([]);
+  const [loading, setLoading] = useState(true);
 
-        <div className={styles['review-actions']}>
-          <div className={styles['like-comment']}>
-            <img src="/icons/like.svg" alt="Like" />
-            <p>(1)</p>
-          </div>
-          <div className={styles['dislike-comment']}>
-            <img src="/icons/dislike.svg" alt="Dislike" />
-            <p>(0)</p>
-          </div>
-        </div>
-      </div>
+  useEffect(() => {
+    const fetchComments = async () => {
+      try {
+        const response = await axios.get(`${PREFIX}/api/v1/books/${bookId}/comments`);
+        setComments(response.data.data);
+      } catch (error) {
+        console.error('Помилка при завантаженні коментарів:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-      <div className={styles['description-comment']}>
-        <p>Дуже сподобалась книга! Варта вашого часу</p>
-      </div>
+    fetchComments();
+  }, [bookId]);
+
+  if (loading) return <p>Завантаження коментарів...</p>;
+  if (comments.length === 0) return <p>Коментарі відсутні.</p>;
+
+  return ( 
+    <div>
+      {comments.map(comment => (
+        <CommentData  key={comment.id} data={comment} />
+      ))}
     </div>
   );
 };
 
-export default Comment;
+export default Comments;

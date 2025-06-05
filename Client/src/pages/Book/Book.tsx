@@ -125,7 +125,7 @@ const Book = () => {
                   />
                 )}
               </div>
-              {showComments && <Comments />}
+              {showComments && <Comments bookId={book.id} />}
             </div>
           </div>
 

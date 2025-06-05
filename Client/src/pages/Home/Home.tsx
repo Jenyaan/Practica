@@ -4,7 +4,7 @@ import Header from '../../components/simple/Header/Header';
 import styles from './Home.module.css';
 import type { PropsCart } from '../../components/smart/BookCart/BookCart';
 import BookCart from '../../components/smart/BookCart/BookCart';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { useSelector } from 'react-redux';
 import type { RootState } from '../../store/store';
@@ -14,6 +14,13 @@ const Home = () => {
   const jwt = useSelector((state: RootState) => state.user.jwt);
   const [books, setBooks] = useState<PropsCart[]>([]);
   const [userId, setUserId] = useState<number | null>(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [lastPage, setLastPage] = useState(1); // ← Додали стан для останньої сторінки
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!jwt) navigate('/');
+  }, [jwt, navigate]);
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -60,6 +67,25 @@ const Home = () => {
     }
   }, [jwt, userId]);
 
+  const handlePageClick = (page: number) => {
+    setCurrentPage(page);
+  };
+
+  const renderPagination = () => {
+    const pages = [];
+    for (let i = 1; i <= lastPage; i++) {
+      pages.push(
+        <button
+          key={i}
+          onClick={() => handlePageClick(i)}
+          className={i === currentPage ? styles['active_page'] : ''}
+        >
+          {i}
+        </button>
+      );
+    }
+    return pages;
+  };
 
   return (
     <div className={styles['container']}>
@@ -89,7 +115,7 @@ const Home = () => {
           </div>
         </div>
         <div className={styles['pagination']}>
-          <p>1 ... 3 <span>4</span> 5 ... 12</p>
+          {renderPagination()}
         </div>
       </div>
       <Footer />

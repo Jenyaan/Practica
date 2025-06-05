@@ -37,14 +37,9 @@
 .pagination button {
   padding: 8px 12px;
   border: none;
-  background: #ddd;
   cursor: pointer;
 }
 
-.pagination button.active {
-  font-weight: bold;
-  background: #aaa;
-}
 
 .fillter_books {
     display: flex;
@@ -72,4 +67,10 @@
 .fillter_books select:focus {
   border-color: #888;
   background-color: #fff;
+}
+
+.active_page {
+  font-weight: bold;
+  color: #FFC65C;
+  border-radius: 4px;
 }

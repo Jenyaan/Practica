@@ -1,41 +1,42 @@
 import React, { useEffect, useRef, useState } from 'react';
-import type { DragEvent, ChangeEvent, FormEvent } from 'react';
+import { useForm } from 'react-hook-form';
+import type { SubmitHandler } from 'react-hook-form';
+import { useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 import Footer from '../../components/simple/Footer/Footer';
 import Header from '../../components/simple/Header/Header';
 import styles from './AddBook.module.css';
-import { PREFIX } from '../../api/API';
 import axios from 'axios';
-import { useSelector } from 'react-redux';
+import { PREFIX } from '../../api/API';
 import type { RootState } from '../../store/store';
 
-interface BookData {
+interface FormValues {
   title: string;
   author: string;
   genre: string;
-  description: string;
-  tags: string;
+  description?: string;
+  tags?: string;
   access: string;
-  coverImage: File | null;
-  bookFiles: File[];
+  coverImage: FileList;
 }
 
-
 const AddBook = () => {
-    const jwt = useSelector((state: RootState) => state.user.jwt);
-    const fileInputRef = useRef<HTMLInputElement>(null);
-    const [dragActive, setDragActive] = useState(false);
-    const [isIdUser, setisIdUser] = useState<number | null>(null);
-    const [bookData, setBookData] = useState<BookData>({
-        title: '',
-        author: '',
-        genre: 'Жанр',
-        description: '',
-        tags: '',
-        access: 'Доступ',
-        coverImage: null,
-        bookFiles: []
-    });
-  
+  const jwt = useSelector((state: RootState) => state.user.jwt);
+  const [isIdUser, setIsIdUser] = useState<number | null>(null);
+  const [coverImage, setCoverImage] = useState<File | null>(null);
+  const [bookFiles, setBookFiles] = useState<File[]>([]);
+  const [dragActive, setDragActive] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const navigate = useNavigate();
+
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    watch,
+    formState: { errors }
+  } = useForm<FormValues>();
+
   useEffect(() => {
     const fetchUserData = async (token: string) => {
       try {
@@ -44,117 +45,88 @@ const AddBook = () => {
             Authorization: `Bearer ${token}`,
           },
         });
-        setisIdUser(response.data.id)
-
+        setIsIdUser(response.data.id);
       } catch (error) {
         console.error('Error fetching user data:', error);
       }
     };
 
-    if (jwt) {
-      fetchUserData(jwt);
-    } else {
-      console.log('JWT token is missing');
-    }
+    if (jwt) fetchUserData(jwt);
   }, [jwt]);
 
+  const onSubmit: SubmitHandler<FormValues> = async (data) => {
+  // Валідація зображення
+  if (!coverImage) {
+    alert('Оберіть зображення обкладинки!');
+    return;
+  }
 
-  const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
-    const { name, value } = e.target;
-    setBookData(prev => ({
-      ...prev,
-      [name]: value
-    }));
-  };
+  if (!coverImage.type.startsWith('image/')) {
+    alert('Файл обкладинки має бути зображенням!');
+    return;
+  }
 
-    const handleMultipleFilesChange = (e: ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files) {
-        const newFiles = Array.from(e.target.files);
-        setBookData(prev => ({
-        ...prev,
-        bookFiles: [...prev.bookFiles, ...newFiles]
-        }));
+  // Валідація файлів книг
+  if (bookFiles.length === 0) {
+    alert('Додайте хоча б один файл книги!');
+    return;
+  }
+
+  const fileTypes = new Set<string>();
+  let hasPDF = false;
+
+  for (const file of bookFiles) {
+    if (file.size === 0) {
+      alert(`Файл "${file.name}" є порожнім!`);
+      return;
     }
-    };
 
-  const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
-      const { name } = e.target;
-      setBookData(prev => ({
-        ...prev,
-        [name]: e.target.files![0]
-      }));
+    const type = file.type;
+    if (!type) {
+      alert(`Файл "${file.name}" має невідомий формат!`);
+      return;
     }
-  };
 
-  const handleDrag = (e: DragEvent<HTMLDivElement>) => {
-    e.preventDefault();
-    e.stopPropagation();
-    if (e.type === 'dragenter' || e.type === 'dragover') {
-      setDragActive(true);
-    } else if (e.type === 'dragleave') {
-      setDragActive(false);
+    if (fileTypes.has(type)) {
+      alert(`Файли мають бути різних форматів! Повторюється: ${type}`);
+      return;
     }
-  };
 
-    const handleDrop = (e: DragEvent<HTMLDivElement>) => {
-    e.preventDefault();
-    e.stopPropagation();
-    setDragActive(false);
-    if (e.dataTransfer.files) {
-        const droppedFiles = Array.from(e.dataTransfer.files);
-        setBookData(prev => ({
-        ...prev,
-        bookFiles: [...prev.bookFiles, ...droppedFiles]
-        }));
+    fileTypes.add(type);
+
+    if (type === 'application/pdf') {
+      hasPDF = true;
     }
-    };
+  }
 
-const removeFile = (index: number) => {
-  setBookData(prev => {
-    const updatedFiles = [...prev.bookFiles];
-    updatedFiles.splice(index, 1);
-    return {
-      ...prev,
-      bookFiles: updatedFiles
-    };
-  });
-};
+  if (!hasPDF) {
+    alert('Серед файлів книг має бути хоча б один PDF!');
+    return;
+  }
 
-
-const handleSubmit = async (e: FormEvent) => {
-  e.preventDefault();
-
+  // Формування FormData та відправка
   const formData = new FormData();
-
-  formData.append('title', bookData.title);
-  formData.append('author', bookData.author);
-
-  if (bookData.coverImage) {
-    formData.append('image', bookData.coverImage);
-  }
-
+  formData.append('title', data.title);
+  formData.append('author', data.author);
   formData.append('genres[0]', '1');
+  formData.append('image', coverImage);
 
-
-  if (bookData.description) {
-    formData.append('description', bookData.description);
+  if (data.description) {
+    formData.append('description', data.description);
   }
 
-  if (bookData.tags) {
-    formData.append('tags', bookData.tags);
+  if (data.tags) {
+    formData.append('tags', data.tags);
   }
 
-  if (bookData.access !== 'Доступ') {
-    formData.append('public', bookData.access === 'Публічний' ? '1' : '0');
-  }
+  formData.append('public', data.access === 'Публічний' ? '1' : '0');
 
-  bookData.bookFiles.forEach((file, index) => {
+  bookFiles.forEach((file, index) => {
     formData.append(`files[${index}]`, file);
   });
 
   try {
-    const response = await axios.post(
+    await axios.post(
       `${PREFIX}/api/v1/users/${isIdUser}/books`,
       formData,
       {
@@ -164,96 +136,127 @@ const handleSubmit = async (e: FormEvent) => {
         },
       }
     );
-
-    console.log(response);
-
     alert('Книга успішно додана!');
-    setBookData({
-      title: '',
-      author: '',
-      genre: 'Жанр',
-      description: '',
-      tags: '',
-      access: 'Доступ',
-      coverImage: null,
-      bookFiles: [],
-    });
+    navigate('/home');
   } catch (error: any) {
-    if (error.response) {
-      console.error('Помилка:', error.response.data);
-      alert('Помилка додавання книги');
-    } else {
-      console.error('Помилка під час надсилання форми:', error);
-      alert('Непередбачена помилка');
-    }
+    console.error('Помилка додавання книги:', error.response || error);
+    alert('Не вдалося додати книгу');
   }
 };
 
 
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setCoverImage(file);
+    }
+  };
+
+  const handleMultipleFilesChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files) {
+      const newFiles = Array.from(e.target.files);
+      setBookFiles(prev => [...prev, ...newFiles]);
+    }
+  };
+
+  const handleDrag = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (e.type === 'dragenter' || e.type === 'dragover') {
+      setDragActive(true);
+    } else if (e.type === 'dragleave') {
+      setDragActive(false);
+    }
+  };
+
+  const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setDragActive(false);
+    if (e.dataTransfer.files) {
+      const droppedFiles = Array.from(e.dataTransfer.files);
+      setBookFiles(prev => [...prev, ...droppedFiles]);
+    }
+  };
+
+  const removeFile = (index: number) => {
+    setBookFiles(prev => prev.filter((_, i) => i !== index));
+  };
+
+const onInvalid = (errors: any) => {
+  const messages = Object.values(errors).map((err: any) => err.message).filter(Boolean);
+  if (messages.length > 0) {
+    alert(messages.join('\n'));
+  }
+};
+
   return (
-    <div>
+    <div className={styles.containerAddBook}>
       <Header />
       <div className={styles.main}>
         <h2>Додавання книги</h2>
-        <form className={styles.form} onSubmit={handleSubmit}>
+          <form className={styles.form} onSubmit={handleSubmit(onSubmit, onInvalid)}>
           <input
-            type="text"
-            name="title"
+            {...register("title", {
+              required: "Назва обов’язкова",
+              minLength: { value: 10, message: "Мінімум 10 символів" },
+              maxLength: { value: 50, message: "Максимум 50 символів" }
+            })}
             placeholder="Назва книги"
-            value={bookData.title}
-            onChange={handleChange}
-            required
+            className={errors.title ? styles.inputError : ''}
           />
+          {errors.title && <p className={styles.error}>{errors.title.message}</p>}
+
           <input
-            type="text"
-            name="author"
+            {...register("author", {
+              required: "Автор обов’язковий",
+              maxLength: { value: 50, message: "Максимум 50 символів" }
+            })}
             placeholder="Автор"
-            value={bookData.author}
-            onChange={handleChange}
-            required
+            className={errors.author ? styles.inputError : ''}
           />
-          <select name="genre" value={bookData.genre} onChange={handleChange} required >
-            <option disabled value="Жанр">Жанр</option>
+          {errors.author && <p className={styles.error}>{errors.author.message}</p>}
+
+          <select {...register("genre", { required: "Жанр обов’язковий" })}>
+            <option disabled value="">Жанр</option>
             <option value="Фантастика">Фантастика</option>
             <option value="Драма">Драма</option>
             <option value="Роман">Роман</option>
           </select>
+          {errors.genre && <p className={styles.error}>{errors.genre.message}</p>}
 
-            <div className={styles.fileDrop}>
-            {bookData.coverImage ? (
-                <div className={styles.fileItem}>
+          <div className={styles.fileDrop}>
+            {coverImage ? (
+              <div className={styles.fileItem}>
                 <div className={styles.imagePreview}>
-                  <img
-                    src="/icons/file.svg"
-                    alt="Обкладинка"
-                  />
+                  <img src="/icons/file.svg" alt="Обкладинка" />
                 </div>
-                <span className={styles.fileName}>{bookData.coverImage.name}</span>
+                <span className={styles.fileName}>{coverImage.name}</span>
                 <button
-                    type="button"
-                    className={styles.removeBtn}
-                    onClick={() => setBookData(prev => ({ ...prev, coverImage: null }))}
+                  type="button"
+                  className={styles.removeBtn}
+                  onClick={() => setCoverImage(null)}
                 >
-                    ✕
+                  ✕
                 </button>
-                </div>
+              </div>
             ) : (
-                <div
+              <div
                 className={styles.addFileLabel}
                 onClick={() => fileInputRef.current?.click()}
-                >
+              >
                 + Додати зображення
-                </div>
+              </div>
             )}
             <input
-                type="file"
-                name="coverImage"
-                accept="image/*"
-                ref={fileInputRef}
-                onChange={handleFileChange}
-                style={{ display: 'none' }}
+              type="file"
+              name="coverImage"
+              accept="image/*"
+              ref={fileInputRef}
+              onChange={handleFileChange}
+              style={{ display: 'none' }}
             />
-            </div>
+          </div>
 
           <div
             className={`${styles.fileDrop} ${dragActive ? styles.dragActive : ''}`}
@@ -261,61 +264,53 @@ const handleSubmit = async (e: FormEvent) => {
             onDragLeave={handleDrag}
             onDragOver={handleDrag}
             onDrop={handleDrop}
-            >
-            {bookData.bookFiles.map((file, index) => (
-                <div key={index} className={styles.fileItem}>
+          >
+            {bookFiles.map((file, index) => (
+              <div key={index} className={styles.fileItem}>
                 <div className={styles.imagePreview}>
-                  <img
-                    src="/icons/file.svg"
-                    alt="Файл"
-                  />
+                  <img src="/icons/file.svg" alt="Файл" />
                 </div>
                 <span>{file.name}</span>
                 <button
-                    type="button"
-                    onClick={() => removeFile(index)}
-                    className={styles.removeBtn}
+                  type="button"
+                  onClick={() => removeFile(index)}
+                  className={styles.removeBtn}
                 >
-                    ✕
+                  ✕
                 </button>
-                </div>
+              </div>
             ))}
             <label className={styles.addFileLabel}>
-                + Додати файл
-                <input
+              + Додати файл
+              <input
                 type="file"
                 multiple
                 onChange={handleMultipleFilesChange}
                 style={{ display: 'none' }}
-                />
+              />
             </label>
-            </div>
+          </div>
 
-          
           <textarea
-            name="description"
+            {...register("description", { maxLength: { value: 500, message: "Максимум 500 символів" } })}
             placeholder="Опис"
             rows={5}
-            value={bookData.description}
-            onChange={handleChange}
           />
+          {errors.description && <p className={styles.error}>{errors.description.message}</p>}
+
           <input
-            type="text"
-            name="tags"
+            {...register("tags", { maxLength: { value: 100, message: "Максимум 100 символів" } })}
             placeholder="Теги (розділяйте пробілом)"
-            value={bookData.tags}
-            onChange={handleChange}
           />
-          <select
-            name="access"
-            value={bookData.access}
-            onChange={handleChange}
-            required
-          >
-            <option disabled value="Доступ">Доступ</option>
+          {errors.tags && <p className={styles.error}>{errors.tags.message}</p>}
+
+          <select {...register("access", { required: "Виберіть доступ" })}>
+            <option disabled value="">Доступ</option>
             <option value="Публічний">Публічний</option>
             <option value="Приватний">Приватний</option>
           </select>
+          {errors.access && <p className={styles.error}>{errors.access.message}</p>}
+
           <button type="submit" className={styles.submit}>Додати</button>
         </form>
       </div>
@@ -324,4 +319,4 @@ const handleSubmit = async (e: FormEvent) => {
   );
 };
 
-export default AddBook; 
+export default AddBook;

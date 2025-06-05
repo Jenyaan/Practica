@@ -48,7 +48,10 @@
     position: absolute;
     right: 40px;
     cursor: pointer;
+    transition: opacity 0.1s;
 }
+
+
 
 .text-book::-webkit-scrollbar {
   width: 16px;

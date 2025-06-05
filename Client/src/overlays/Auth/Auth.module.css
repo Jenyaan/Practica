@@ -1,91 +1,89 @@
-.auth-container{
-  height: 100%;
+.auth-container {
+  min-height: 100vh;
   width: 100%;
   background-color: #EC9704;
   display: flex;
   justify-content: center;
   align-items: center;
-  padding-top: 0;
-  padding-bottom: 0;
+  padding: 0;
   box-sizing: border-box;
 }
 
-.auth-main{
-    padding: 55px 0px;
-    border-radius: 24px;
-    background: #F0F0F0;
-    width: 800px;
-    box-sizing: border-box;
-    text-align: center;
-    position: relative;
+.auth-main {
+  padding: 5vh 5vw;
+  border-radius: 2.4vh;
+  background: #F0F0F0;
+  width: 90%;
+  width: 90vh;
+  box-sizing: border-box;
+  text-align: center;
+  position: relative;
 }
 
 .auth_title {
-    padding-bottom: 20px;
-    text-align: center;
-    font-size: 40px;
-    font-style: normal;
-    font-weight: 400;
-    line-height: normal;
+  padding-bottom: 2vh;
+  text-align: center;
+  font-size: 4vh;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
 }
 
 .auth_input {
-    width: 70%;
-    padding: 15px;
-    margin: 15px 0;
-    border: none;
-    border-radius: 10px;
-    background-color: #d9d9d9;
-    font-size: 16px;
-    box-sizing: border-box;
+  width: 90%;
+  padding: 2vh;
+  margin: 1vh 0;
+  border: none;
+  border-radius: 1vh;
+  background-color: #d9d9d9;
+  font-size: 2vh;
+  box-sizing: border-box;
 }
 
 .auth_button {
-    width: 70%;
-    padding: 15px;
-    background: #FFAB4B;
-    color: rgb(0, 0, 0);
-    font-size: 18px;
-    border: none;
-    border-radius: 10px;
-    margin-top: 20px;
-    cursor: pointer;
+  width: 90%;
+  padding: 2vh;
+  background: #FFAB4B;
+  color: rgb(0, 0, 0);
+  font-size: 2.2vh;
+  border: none;
+  border-radius: 1vh;
+  margin-top: 2vh;
+  cursor: pointer;
 }
 
 .auth_button:hover {
-    background-color: #ff9900;
+  background-color: #ff9900;
 }
 
-.auth_description{
-    padding-top: 20px;
+.auth_description {
+  padding-top: 2vh;
 }
 
 .auth_description p {
-    margin: 15px 0 5px;
-    font-size: 19px;
-    color: #333;
+  margin: 2vh 0 1vh;
+  font-size: 2vh;
+  color: #333;
 }
 
-.link{
-    font-size: 19px;
-    color: #f5a623;
-    text-decoration: none;
-    margin-left: 5px;
-    font-weight: 500;
+.link {
+  font-size: 2vh;
+  color: #f5a623;
+  text-decoration: none;
+  margin-left: 0.5vh;
+  font-weight: 500;
 }
 
 .link:hover {
-    text-decoration: underline;
+  text-decoration: underline;
 }
 
 .auth_error {
   color: red;
-  font-size: 18px;
+  font-size: 2vh;
   margin: 0;
 }
 
 .auth_input_error {
-  border: 1px solid red;
+  border: 0.1vh solid red;
 }
-
-

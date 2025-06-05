@@ -3,6 +3,7 @@ import axios from 'axios';
 import styles from './ModalDownload.module.css';
 import { useSelector } from 'react-redux';
 import type { RootState } from '../../../store/store';
+import { PREFIX } from '../../../api/API';
 
 type ModalProps = {
   onClose: () => void;
@@ -16,14 +17,17 @@ const ModalDownload: React.FC<ModalProps> = ({ onClose, bookId, format }) => {
   const handleDownload = async () => {
     try {
       const response = await axios.get(
-        `/api/v1/books/${bookId}/download/${format.toLowerCase()}`,
+        `${PREFIX}/api/v1/books/${bookId}/download/${format.toLowerCase()}`,
         {
           responseType: 'blob',
           headers: {
             Authorization: `Bearer ${jwt}`,
+            'Cache-Control': 'no-cache',
           },
         }
       );
+      console.log('Тіло відповіді:', response.data);
+
       
       const blob = new Blob([response.data]);
       const url = window.URL.createObjectURL(blob);
