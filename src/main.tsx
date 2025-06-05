@@ -15,6 +15,7 @@ import AddBook from './pages/AddBook/AddBook';
 import { Provider } from 'react-redux';
 import { store } from './store/store';
 import Profile from './pages/Profile/Profile';
+import Search from './pages/Search/Search';
 
 const router = createBrowserRouter([
   {
@@ -28,6 +29,10 @@ const router = createBrowserRouter([
   {
     path: '/profile',
     element: <Profile/>,
+  },
+  {
+    path: '/search/:nameBook',
+    element: <Search/>,
   },
   {
     path: '/auth',

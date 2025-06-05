@@ -46,35 +46,36 @@ const Registrate = () => {
     <>
       <h1 className={styles.auth_title}>Реєстрація</h1>
       <form onSubmit={handleSubmit(onSubmit)} className={styles.auth_form}>
+        <input 
+          {...register('name', { required: 'Ім’я обов’язкове' })}
+          placeholder="Ім’я" className={styles.auth_input} />
+        <p className={styles.auth_hint}>Введіть своє повне ім’я</p>
 
         <input 
-        {...register('name', { required: 'Ім’я обов’язкове' })}
-         placeholder="Ім’я" className={styles.auth_input} />
+          {...register('email', { required: 'Пошта обов’язкова', pattern: { value: /^\S+@\S+$/i, message: 'Невірний формат пошти' } })}
+          placeholder="Пошта" className={styles.auth_input} />
+        <p className={styles.auth_hint}>Формат: name@example.com</p>
 
         <input 
-        {...register('email', { required: 'Пошта обов’язкова', pattern: { value: /^\S+@\S+$/i, message: 'Невірний формат пошти' } })}
-         placeholder="Пошта" className={styles.auth_input} />
-        
-        <input 
-        {...register('password', { required: 'Пароль обов’язковий', minLength: { value: 16, message: 'Мінімум 16 символів' } })}
-         type="password" placeholder="Пароль" className={styles.auth_input} />
-        
-        <input 
-        {...register('confirmPassword', { required: 'Підтвердження обов’язкове', validate: v => v === password || 'Паролі не співпадають' })}
-         type="password" placeholder="Підтвердження паролю" className={styles.auth_input} />
+          {...register('password', { required: 'Пароль обов’язковий', minLength: { value: 16, message: 'Мінімум 16 символів' } })}
+          type="password" placeholder="Пароль" className={styles.auth_input} />
+        <p className={styles.auth_hint}>Пароль повинен містити щонайменше 16 символів (літери, цифри та спецсимволи)</p>
 
-        {(errors.email || errors.password || errors.name) && (
-          <p className={styles["auth_error"]}>
-            {typeof errors.email?.message === "string"
-              ? errors.email.message
-              : typeof errors.password?.message === "string"
-              ? errors.password.message
-              : typeof errors.name?.message === "string"
-              ? errors.name.message
-              : serverMessage}
-          </p>
-        )}        
-        
+        <input 
+          {...register('confirmPassword', { required: 'Підтвердження обов’язкове', validate: v => v === password || 'Паролі не співпадають' })}
+          type="password" placeholder="Підтвердження паролю" className={styles.auth_input} />
+        <p className={styles.auth_hint}>Повторіть введений пароль</p>
+
+      {(errors.name || errors.email || errors.password || errors.confirmPassword || serverMessage) && (
+        <p className={styles["auth_error"]}>
+          {errors.name?.message?.toString() ||
+          errors.email?.message?.toString() ||
+          errors.password?.message?.toString() ||
+          errors.confirmPassword?.message?.toString() ||
+          serverMessage}
+        </p>
+      )}
+
         <button type="submit" className={styles.auth_button}>Створити</button>
       </form>
       <div className={styles.auth_description}>

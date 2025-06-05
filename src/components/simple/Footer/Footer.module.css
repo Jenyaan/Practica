@@ -1,28 +1,28 @@
 .footer{
     background: #EC9704;   
     display: flex;
-    height: 140px;
+    height: 15.2vh;
     justify-content: space-around;    
     align-items: center;
-    padding-bottom: 10px;
+    padding-bottom: 0.1vh;
 }
 
 
 .footer_description{
     display: flex;
-    gap: 95px;
+    gap: 10vh;
 }
 
 .footer_description > p{
-    font-size: 24px;
+    font-size: 2.6vh;
     font-style: normal;
     font-weight: 400;
     line-height: normal;
 }
 
 .footer_social > p{
-    margin-bottom: 15px;
-    font-size: 24px;
+    margin-bottom: 1.6vh;
+    font-size: 2.6vh;
     font-style: normal;
     font-weight: 400;
     line-height: normal;
@@ -30,12 +30,12 @@
 
 .footer_message {
     display: flex;
-    gap: 25px;
+    gap: 2.7vh;
 }
 
 .footer_message > div{
-    width: 55px;
-    height: 55px;
+    width: 6vh;
+    height: 6vh;
 }
 
 .footer_message > div > img{

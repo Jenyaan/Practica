@@ -15,6 +15,8 @@ const Header = () => {
   const { jwt } = useSelector((state: RootState) => state.user);
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const [searchTerm, setSearchTerm] = useState('');
+
 
   const handleLogout = () => {
     dispatch(userActions.logout());
@@ -51,8 +53,17 @@ const Header = () => {
         (<Link to="/" className={styles["header_logo"]}><img src="/logo.svg" alt="" /></Link>)
         }
         <div className={styles["header_search"]}>
-          <input type="text" />
-          <Link to='#' className={styles["header_search_link"]}><img src="/icons/search.svg" alt="" /></Link>
+          <input 
+            type="text" 
+            value={searchTerm} 
+            onChange={(e) => setSearchTerm(e.target.value)} 
+          />
+          <Link 
+            to={`/search/${encodeURIComponent(searchTerm)}`} 
+            className={styles["header_search_link"]}
+          >
+            <img src="/icons/search.svg" alt="Search" />
+          </Link>
         </div>
       </div>
       {jwt ?(

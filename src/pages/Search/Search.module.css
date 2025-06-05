@@ -1,4 +1,4 @@
-.home_main{
+.main{
     margin: 9.8vh auto;
     text-align: center;
     min-height: 100vh;
@@ -73,4 +73,10 @@
   font-weight: bold;
   color: #FFC65C;
   border-radius: 0.4vh;
+}
+
+.card h2 {
+  text-align: center;
+  margin-bottom: 40px;
+  font-size: 28px;
 }
