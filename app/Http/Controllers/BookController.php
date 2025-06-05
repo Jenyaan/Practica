@@ -36,7 +36,8 @@ class BookController extends Controller implements HasMiddleware
     public function index(GETBookRequest $request, User $user)
     {
         $validated = $request->validated();
-        return $this->bookService->showBook($validated)->toResource();
+        $books = $this->bookService->listUserBooks($user, $validated);
+        return $books->toResourceCollection();
     }
 
     /**
@@ -45,7 +46,8 @@ class BookController extends Controller implements HasMiddleware
     public function public(GETBookRequest $request)
     {
         $validated = $request->validated();
-        return $this->bookService->listPublicBooks($validated)->toResourceCollection();
+        $books = $this->bookService->listPublicBooks($validated);
+        return $books->toResourceCollection();
     }
 
     /**
