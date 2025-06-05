@@ -24,6 +24,15 @@ class CommentService
         return $user->comments()->paginate();
     }
 
+    public function showBookComments(Book $book): AbstractPaginator
+    {
+        if (!$book->public) {
+            $this->authUtil->checkUserAffiliation($book->user, "Try to get comments for private book");
+        }
+
+        return $book->comments()->paginate();
+    }
+
     public function showUserBookComments(User $user, Book $book): AbstractPaginator
     {
         if (!$book->public) {

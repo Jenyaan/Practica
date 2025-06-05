@@ -26,13 +26,19 @@ class CommentController extends Controller implements HasMiddleware
     public static function middleware(): array
     {
         return [
-            new Middleware("auth", except: ["index"]),
+            new Middleware("auth", except: ["index", "bookComments"]),
         ];
     }
 
     public function userComments(User $user)
     {
         $comment = $this->commentService->showUserComments($user);
+        return $comment->toResourceCollection();
+    }
+
+    public function bookComments(Book $book)
+    {
+        $comment = $this->commentService->showBookComments($book);
         return $comment->toResourceCollection();
     }
 

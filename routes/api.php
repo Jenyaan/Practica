@@ -31,6 +31,7 @@ Route::prefix("v1/auth")
 
 Route::get("v1/books/{book}/download/{format}", [DownloadController::class, "download"])->name("books.download");
 Route::get("v1/books/{book}/read/{page}", [ReadBookController::class, "getPage"])->name("books.read");
+Route::get("v1/books/{book}/comments", [CommentController::class, "bookComments"])->name("books.comments");
 Route::get("v1/books/genres", fn() => Genre::all())->name("books.genres");
 Route::get("v1/books/formats", fn() => Format::all())->name("books.formats");
 Route::get("v1/books", [BookController::class, "public"])->name("books.public");
