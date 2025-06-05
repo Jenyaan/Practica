@@ -261,7 +261,8 @@ class BookService
                     if ($filter[0] === "year") {
                         $books = $books->where($filter[0], $filter[1]);
                     } else {
-                        $books = $books->whereFullText($filter[0], $filter[1]);
+                        $like = "%" . $filter[1] . "%";
+                        $books = $books->where($filter[0], "like", $like);
                     }
                 });
         }
