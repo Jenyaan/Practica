@@ -23,7 +23,7 @@ class UpdateCommentRequest extends FormRequest
     {
         return [
             "text" => "string|max:200",
-            "score" => "numeric|integer|min:1|max10",
+            "score" => "numeric|integer|min:1|max:10",
         ];
     }
 }
