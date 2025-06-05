@@ -1,13 +1,11 @@
 import { configureStore } from "@reduxjs/toolkit";
 import  userSlice, { AUTH_PERSISTENT_STATE }  from "./auth.slice";
-// import alertReducer from './message.slice';
 import { saveState } from "./storage.ts";
 
 
 export const store = configureStore({
 	reducer: {
 		user: userSlice,
-	    // alert: alertReducer,
 	}
 });
 

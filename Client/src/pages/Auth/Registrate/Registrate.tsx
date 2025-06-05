@@ -3,8 +3,6 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { useEffect, useState } from 'react';
 import type { RegistrateRequest } from '../../../models/AuthModel';
-import axios from 'axios';
-import { PREFIX } from '../../../api/API';
 import { registration } from '../../../store/auth.slice';
 import { useDispatch, useSelector } from 'react-redux';
 import type { AppDispath, RootState } from '../../../store/store';
@@ -35,6 +33,7 @@ const Registrate = () => {
         navigate('/auth/login');
       } else if (registration.rejected.match(result)) {
         const errorMessage = result.payload as string || result.error?.message || 'Помилка реєстрації';
+        setServerMessage(errorMessage);
         console.log(result);
         console.log(errorMessage);
       }

@@ -1,7 +1,7 @@
 import { createAsyncThunk, createSlice, type PayloadAction } from "@reduxjs/toolkit";
 import { loadState, saveState } from "./storage";
 import { PREFIX } from "../api/API";
-import axios, { AxiosError } from "axios";
+import axios from "axios";
 
 export const AUTH_PERSISTENT_STATE = 'user';
 

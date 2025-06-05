@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import Footer from '../../components/simple/Footer/Footer';
 import Header from '../../components/simple/Header/Header';
 import styles from './Home.module.css';
@@ -15,7 +15,6 @@ const Home = () => {
   const [books, setBooks] = useState<PropsCart[]>([]);
   const [userId, setUserId] = useState<number | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
-  const [lastPage, setLastPage] = useState(1); // ← Додали стан для останньої сторінки
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -73,7 +72,7 @@ const Home = () => {
 
   const renderPagination = () => {
     const pages = [];
-    for (let i = 1; i <= lastPage; i++) {
+    for (let i = 1; i <= 1; i++) {
       pages.push(
         <button
           key={i}
