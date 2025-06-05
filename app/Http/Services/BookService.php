@@ -255,7 +255,6 @@ class BookService
 
     private function filterBooks(&$books, array $query): void
     {
-        $books = Book::where("public", true);
         if (array_key_exists("filter_by", $query)) {
             collect($query["filter_by"])->transform(fn($value) => explode(":", $value))
                 ->each(function ($filter) use (&$books) {
