@@ -7,7 +7,7 @@ RUN apt-get update\
     && apt-get clean
 # install php extensions
 RUN install-php-extensions pdo_pgsql xdebug pcntl
-ENV DOCUMENT_ROOT=/app/public PHPRC=/app/php.ini
+ENV DOCUMENT_ROOT=/app/public PHPRC=/app/dev-php.ini
 WORKDIR /app
 RUN a2enmod rewrite headers
 COPY /.docker/server.conf /etc/apache2/sites-available/000-default.conf
