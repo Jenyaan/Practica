@@ -6,7 +6,7 @@
   font-family: sans-serif;
 }
 
-.containerAddBook  h2 {
+.main h2 {
   font-weight: 600;
   font-size: 24px;
   margin-bottom: 24px;
@@ -19,10 +19,10 @@
   width: 420px;
 }
 
-.containerAddBook  input,
-.containerAddBook select,
-.containerAddBook textarea,
-.containerAddBook button {
+.main  input,
+.main select,
+.main textarea,
+.main button {
   border: none;
   border-radius: 8px;
   padding: 16px;
@@ -31,7 +31,7 @@
   outline: none;
 }
 
-.containerAddBook  select {
+.main select {
   appearance: none;
   background-image: url("/icons/dropmenu.svg");
   background-repeat: no-repeat;
@@ -39,7 +39,7 @@
   background-size: 16px;
 }
 
-.containerAddBook textarea {
+.main textarea {
   resize: none;
 }
 

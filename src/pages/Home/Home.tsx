@@ -21,6 +21,24 @@ const Home = () => {
     if (!jwt) navigate('/');
   }, [jwt, navigate]);
 
+
+  const [genres, setGenres] = useState<{ id: number; name: string }[]>([]);
+
+  useEffect(() => {
+    const fetchGenres = async () => {
+      try {
+        const res = await axios.get(`${PREFIX}/api/v1/books/genres`);
+        setGenres(res.data);
+        console.log(res.data)
+ // або res.data.data, якщо жанри у вкладенні
+      } catch (error) {
+        console.error('Помилка отримання жанрів:', error);
+      }
+    };
+
+    fetchGenres();
+  }, []);
+
   useEffect(() => {
     const fetchUser = async () => {
       try {
@@ -101,16 +119,14 @@ const Home = () => {
           </div>
           <div className={styles['fillter_books']}>
             <input type="text" id="search" placeholder="Пошук за автором чи назвою" />
-            <select id="genre">
-              <option value="">Жанр</option>
-              <option value="history">Історія</option>
-              <option value="fiction">Художня</option>
-            </select>
-            <select id="genre">
-              <option value="">Жанр</option>
-              <option value="history">Історія</option>
-              <option value="fiction">Художня</option>
-            </select>
+              <select id="genre">
+                <option value="">Жанр</option>
+                {genres.map((genre) => (
+                  <option key={genre.id} value={genre.name}>
+                    {genre.name}
+                  </option>
+                ))}
+              </select>
           </div>
         </div>
         <div className={styles['pagination']}>

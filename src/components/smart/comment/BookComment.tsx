@@ -24,7 +24,7 @@ const BookComment: React.FC<BookCommentProps> = ({ data }) => {
 
         <div className={styles['user-comment']}>
           <p className={styles.username}>{data.user_name}</p>
-          <p className={styles.date}>{data.created_at}</p>
+          <p className={styles.date}>{new Date(data.created_at).toLocaleDateString('uk-UA')}</p>
         </div>
 
         <div className={styles['rating-comment']}>
