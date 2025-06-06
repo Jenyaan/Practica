@@ -15,8 +15,15 @@ class GenreSeeder extends Seeder
      */
     public function run(): void
     {
-        Genre::create(["name" => "classic"]);
-        Genre::create(["name" => "comedy"]);
-        Genre::create(["name" => "crime"]);
+        Genre::create(["name" => "Психологія"]);
+        Genre::create(["name" => "Романтика"]);
+        Genre::create(["name" => "Класика"]);
+        Genre::create(["name" => "Жахи"]);
+        Genre::create(["name" => "Фантастика"]);
+        Genre::create(["name" => "Фентезі"]);
+        Genre::create(["name" => "Бойовик"]);
+        Genre::create(["name" => "Наукова фантастика"]);
+        Genre::create(["name" => "Технічна"]);
+        Genre::create(["name" => "Еротика"]);
     }
 }
