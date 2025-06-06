@@ -26,6 +26,7 @@ const AddBook = () => {
   const [coverImage, setCoverImage] = useState<File | null>(null);
   const [bookFiles, setBookFiles] = useState<File[]>([]);
   const [dragActive, setDragActive] = useState(false);
+  const [genres, setGenres] = useState<{ id: number; name: string }[]>([]);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const navigate = useNavigate();
 
@@ -51,6 +52,20 @@ const AddBook = () => {
 
     if (jwt) fetchUserData(jwt);
   }, [jwt]);
+
+  useEffect(() => {
+    const fetchGenres = async () => {
+      try {
+        const res = await axios.get(`${PREFIX}/api/v1/books/genres`);
+        setGenres(res.data); // або res.data.data — залежно від структури
+      } catch (error) {
+        console.error('Помилка отримання жанрів:', error);
+      }
+    };
+
+    fetchGenres();
+  }, []);
+
 
   const onSubmit: SubmitHandler<FormValues> = async (data) => {
   // Валідація зображення
@@ -106,7 +121,7 @@ const AddBook = () => {
   const formData = new FormData();
   formData.append('title', data.title);
   formData.append('author', data.author);
-  formData.append('genres[0]', '1');
+  formData.append('genres[0]', data.genre);
   formData.append('image', coverImage);
 
   if (data.description) {
@@ -212,11 +227,13 @@ const onInvalid = (errors: any) => {
             className={errors.author ? styles.inputError : ''}
           />
 
-          <select {...register("genre", { required: "Жанр обов’язковий" })}>
+          <select {...register("genre", { required: "Жанр обов’язковий" })} defaultValue="">
             <option disabled value="">Жанр</option>
-            <option value="Фантастика">Фантастика</option>
-            <option value="Драма">Драма</option>
-            <option value="Роман">Роман</option>
+            {genres.map((genre) => (
+              <option key={genre.id} value={genre.id.toString()}>
+                {genre.name}
+              </option>
+            ))}
           </select>
 
           <div className={styles.fileDrop}>

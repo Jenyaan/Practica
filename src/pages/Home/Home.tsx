@@ -15,22 +15,20 @@ const Home = () => {
   const [books, setBooks] = useState<PropsCart[]>([]);
   const [userId, setUserId] = useState<number | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
+  const [selectedGenre, setSelectedGenre] = useState('');
   const navigate = useNavigate();
+
+  const [genres, setGenres] = useState<{ id: number; name: string }[]>([]);
 
   useEffect(() => {
     if (!jwt) navigate('/');
   }, [jwt, navigate]);
-
-
-  const [genres, setGenres] = useState<{ id: number; name: string }[]>([]);
 
   useEffect(() => {
     const fetchGenres = async () => {
       try {
         const res = await axios.get(`${PREFIX}/api/v1/books/genres`);
         setGenres(res.data);
-        console.log(res.data)
- // або res.data.data, якщо жанри у вкладенні
       } catch (error) {
         console.error('Помилка отримання жанрів:', error);
       }
@@ -65,12 +63,13 @@ const Home = () => {
           headers: {
             Authorization: `Bearer ${jwt}`,
           },
+          params: selectedGenre ? { genre: selectedGenre } : {},
         });
 
         const booksData = res.data.data.map((book: any) => ({
           id: book.id,
           title: book.title,
-          image_url: book.image_url
+          image_url: book.image_url,
         }));
 
         setBooks(booksData);
@@ -82,7 +81,7 @@ const Home = () => {
     if (jwt && userId !== null) {
       fetchBooks();
     }
-  }, [jwt, userId]);
+  }, [jwt, userId, selectedGenre]);
 
   const handlePageClick = (page: number) => {
     setCurrentPage(page);
@@ -119,14 +118,18 @@ const Home = () => {
           </div>
           <div className={styles['fillter_books']}>
             <input type="text" id="search" placeholder="Пошук за автором чи назвою" />
-              <select id="genre">
-                <option value="">Жанр</option>
-                {genres.map((genre) => (
-                  <option key={genre.id} value={genre.name}>
-                    {genre.name}
-                  </option>
-                ))}
-              </select>
+            <select
+              id="genre"
+              value={selectedGenre}
+              onChange={(e) => setSelectedGenre(e.target.value)}
+            >
+              <option value="">Жанр</option>
+              {genres.map((genre) => (
+                <option key={genre.id} value={genre.name}>
+                  {genre.name}
+                </option>
+              ))}
+            </select>
           </div>
         </div>
         <div className={styles['pagination']}>

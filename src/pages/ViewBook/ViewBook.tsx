@@ -8,6 +8,7 @@ import { useSelector } from 'react-redux';
 import axios from 'axios';
 import { PREFIX } from '../../api/API';
 import type { RootState } from '../../store/store';
+import type { Book } from '../Book/Book';
 
 export interface PropsViewBook{
   text: string;
@@ -25,6 +26,8 @@ const ViewBook = () => {
   const [contentPage, setContentPage] = useState<PropsViewBook>();
   const [page, setPage] = useState(Number(pageId) || 1);
 
+  const [book, setBook] = useState<Book | null>(null);
+
   useEffect(() => {
     const fetchPageText = async () => {
       try {
@@ -34,6 +37,7 @@ const ViewBook = () => {
           }
         });
         setContentPage(res.data);
+        console.log(res.data)
       } catch (err) {
         console.error('Помилка завантаження сторінки:', err);
       }
@@ -43,6 +47,18 @@ const ViewBook = () => {
       fetchPageText();
     }
   }, [jwt, bookId, page]);
+
+  useEffect(() => {
+  if (!bookId) return;
+  axios.get<Book>(`${PREFIX}/api/v1/books/${bookId}`, {
+    headers: {
+      Authorization: `Bearer ${jwt}`
+    }
+  })
+    .then(response => setBook(response.data))
+    .catch(error => console.error('Помилка при завантаженні книги:', error));
+}, [bookId, jwt]);
+
 
   useEffect(() => {
     const stored = localStorage.getItem(`bookmark_${bookId}`);
@@ -86,7 +102,7 @@ const ViewBook = () => {
       <div className={styles['main']}>
         <LinkBack>Назад</LinkBack>
         <div className={styles['head-read']}>
-          <p>48 Законів власті</p>
+          <p>{book?.title}</p>
           {bookmarks.length > 0 && (
             <p className={styles['bookmark-list']}>Перейти до закладки:
               {bookmarks.map((p) => (
